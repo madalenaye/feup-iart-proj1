@@ -1,5 +1,40 @@
 from typing import Tuple, List
 from icecream import ic
+from dataclasses import dataclass
+
+@dataclass
+class Line:
+    vector: Tuple[int,int] = (0,0)
+    initial_point: Tuple[int,int] = (0,0)
+
+    # check if lines are equal by checking colinearity and if the point can be calculated
+    # by the other vector
+    def __eq__(self, __value: object) -> bool:
+        if type(__value) != type(self):
+            return False
+        #check if vector is colinear by doing the dot product
+        dot_z = self.vector[0]*__value.vector[1] - self.vector[1]*__value.vector[0]
+        if dot_z != 0:
+            return False
+        
+        # Handle division by 0 by checking if the other vector component isn't zero (because it will cause an
+        #   indeterminate result, we also check if the there's no difference in the intial points on that 
+        #   component
+        try:
+            k_x = (self.initial_point[0] - __value.initial_point[0])/self.vector[0]
+        except ZeroDivisionError:
+            return self.vector[1] != 0 and (self.initial_point[0] - __value.initial_point[0]) == 0
+        
+        try:
+            k_y = (self.initial_point[1] - __value.initial_point[1])/self.vector[1]
+        except ZeroDivisionError:
+            return self.vector[0] != 0 and (self.initial_point[1] - __value.initial_point[1]) == 0
+        
+        if k_x != k_y:
+            return False
+        return True
+
+
 class GameState:
     # the state is a 2D list 5x9 where (the board is inverted vertically relative to real life):
     #   -1 -> represents an empty slot
@@ -7,7 +42,7 @@ class GameState:
     #   1  -> represents a black piece
     state = [[-1 for _ in range(0, 9)] for _ in range(0,5)]
 
-    applied_dirs = set()
+    applied_lines: List[Line] = []
 
     #player is always 0 or 1, where 0 represents the white player and 1 the black player
     player = 0
@@ -70,6 +105,12 @@ class GameState:
                                     self.get_adjacent_squares(piece))
             for empty_square in empty_squares:
                 valid_moves.add((piece, empty_square))
+        
+        #filter valid moves by checking if the line has been already used
+        valid_moves = set(
+            filter(
+                lambda x: Line((x[1][0]-x[0][0], x[1][1]-x[0][1]), x[0]) not in self.applied_lines,valid_moves
+                ))
 
         piece_takes = list(map(lambda x: self.check_if_move_takes(x), valid_moves))
         if any(piece_takes):
@@ -105,23 +146,22 @@ class GameState:
             self.state[curr_coords[1]][curr_coords[0]] = -1 # clear piece
             curr_coords = (curr_coords[0] + diff[0], curr_coords[1] + diff[1])
         
+        self.applied_lines.append(Line(diff, move[0]))
         new_valid_moves = filter(lambda x: x == move[1], self.get_valid_moves())
         piece_takes = list(map(lambda x: self.check_if_move_takes(x), new_valid_moves))
-        # FIXME(luisd): check if piece takes are not in the same direction
+        
         if any(piece_takes):
             return
         
         self.player = ~(self.player)+2
+        self.applied_lines = []
         
-        
-        
-
-
         
     def __init__(self) -> None:
         self.init_pieces()
 
 if __name__ == "__main__":
+    ic(Line((1,0), (0,0)) == Line((-1,0),(1,0)))
     gs = GameState()
     ic(gs.state)
     valid_moves = gs.get_valid_moves()
