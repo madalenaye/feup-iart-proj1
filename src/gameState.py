@@ -91,7 +91,6 @@ class GameState:
         diff = (move[1][0]-move[0][0], move[1][1]-move[0][1])
 
         # check if there's a piece after the empty state
-        print(self.state[move[1][1] + diff[1]][move[1][0] + diff[0]], diff)
         return self.state[move[1][1] + diff[1]][move[1][0] + diff[0]] == ~(self.player)+2
 
     # tuple has the form: (from_pos, to_pos)
@@ -111,7 +110,7 @@ class GameState:
             filter(
                 lambda x: Line((x[1][0]-x[0][0], x[1][1]-x[0][1]), x[0]) not in self.applied_lines,valid_moves
                 ))
-
+        print(valid_moves)
         piece_takes = list(map(lambda x: self.check_if_move_takes(x), valid_moves))
         if any(piece_takes):
             # return only the pieces that takes a enemy piece
