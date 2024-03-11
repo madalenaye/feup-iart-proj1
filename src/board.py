@@ -1,5 +1,6 @@
 from gameState import GameState
 from constants import *
+from icecream import ic
 import pygame
 
 class Board:
@@ -56,7 +57,6 @@ class Board:
         x, y = pos
         row = 4 - (y // SQUARE_SIZE) 
         col =  x // SQUARE_SIZE
-        print(row, col)
         return row, col
     
     def get_piece(self, row, col):
@@ -64,14 +64,12 @@ class Board:
     
     def draw_valid_moves(self, screen, row, col):
         valid_moves = self.state.get_valid_moves()
-        print(valid_moves)
         for move in valid_moves:
             from_pos, to_pos = move
             if (from_pos[0] == col and from_pos[1] == row):
-                pygame.draw.circle(screen, GRAY, (to_pos[0] * SQUARE_SIZE + SQUARE_SIZE / 2, to_pos[1] * SQUARE_SIZE + SQUARE_SIZE / 2), 25)
+                pygame.draw.circle(screen, GRAY, (to_pos[0] * SQUARE_SIZE + SQUARE_SIZE / 2, (4-to_pos[1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 25)
     
     def draw_move(self, screen, from_pos, to_pos):
-        print(from_pos, to_pos)
         valid_moves = self.state.get_valid_moves()
         if (from_pos, to_pos) not in valid_moves:
             return
