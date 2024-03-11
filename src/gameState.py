@@ -90,6 +90,9 @@ class GameState:
     def check_if_move_takes(self, move: Tuple[Tuple[int,int],Tuple[int,int]]) -> bool:
         diff = (move[1][0]-move[0][0], move[1][1]-move[0][1])
 
+        if not (move[1][1] + diff[1] >= 0 and move[1][1] + diff[1] < 5 and move[1][0] + diff[0] >= 0 and move[1][0] + diff[0] < 9):
+            return False
+
         # check if there's a piece after the empty state
         return self.state[move[1][1] + diff[1]][move[1][0] + diff[0]] == ~(self.player)+2
 
