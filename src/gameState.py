@@ -1,6 +1,7 @@
-from typing import Tuple, List
+from typing import Self, Tuple, List
 from icecream import ic
 from dataclasses import dataclass
+from copy import deepcopy
 from enum import Enum
 
 CaptureType = Enum('CaptureType', ['APPROACH', 'WITHDRAWALL'])
@@ -146,18 +147,18 @@ class GameState:
         return list(valid_moves)
 
     # tuple has the form: (from_pos, to_pos)
-    def apply_move(self, move: Tuple[Tuple[int,int],Tuple[int,int]]) -> None:
+    def apply_move(self, move: Tuple[Tuple[int,int],Tuple[int,int]]) -> Self:
         diff = (move[1][0]-move[0][0], move[1][1]-move[0][1])
 
         move_type = self.check_if_move_takes(move)
-        ic(move_type, move)
+        new_board = self.clone_board()
         if move_type == []:
-            self.player = ~(self.player)+2
-            return
+            new_board.player = ~(self.player)+2
+            return new_board
         
         #replace start pos
-        self.state[move[1][1]][move[1][0]] = self.state[move[0][1]][move[0][0]]
-        self.state[move[0][1]][move[0][0]] = -1
+        new_board.state[move[1][1]][move[1][0]] = new_board.state[move[0][1]][move[0][0]]
+        new_board.state[move[0][1]][move[0][0]] = -1
 
         # FIXME(luisd): refactor apply_move to accept a move_type as a parameter, 
         #   because there are cases that can have two valid move types.
@@ -168,40 +169,56 @@ class GameState:
             # while coordinates are valid
             while curr_coords[0] >= 0 and curr_coords[0] < 9 and curr_coords[1] >= 0 and curr_coords[1] < 5:
                 # we exit the loop if there's no more adjacent pieces on this direction
-                if self.state[curr_coords[1]][curr_coords[0]] != ~(self.player)+2:
+                if new_board.state[curr_coords[1]][curr_coords[0]] != ~(new_board.player)+2:
                     break
-                self.state[curr_coords[1]][curr_coords[0]] = -1 # clear piece
+                new_board.state[curr_coords[1]][curr_coords[0]] = -1 # clear piece
                 curr_coords = (curr_coords[0] + diff[0], curr_coords[1] + diff[1])
         else:
             curr_coords = (move[0][0] - diff[0], move[0][1] - diff[1])
             # while coordinates are valid
             while curr_coords[0] >= 0 and curr_coords[0] < 9 and curr_coords[1] >= 0 and curr_coords[1] < 5:
                 # we exit the loop if there's no more adjacent pieces on this direction
-                if self.state[curr_coords[1]][curr_coords[0]] != ~(self.player)+2:
+                if new_board.state[curr_coords[1]][curr_coords[0]] != ~(new_board.player)+2:
                     break
-                self.state[curr_coords[1]][curr_coords[0]] = -1 # clear piece
+                new_board.state[curr_coords[1]][curr_coords[0]] = -1 # clear piece
                 curr_coords = (curr_coords[0] - diff[0], curr_coords[1] - diff[1])
         
-        self.applied_piece = move[1]
-        self.occupied_positions.append(move[0])
-        self.applied_lines.append(Line(diff, move[0]))
-        new_valid_moves = self.get_valid_moves()
-        piece_takes = list(map(lambda x: self.check_if_move_takes(x), new_valid_moves))
+        new_board.applied_piece = move[1]
+        new_board.occupied_positions.append(move[0])
+        new_board.applied_lines.append(Line(diff, move[0]))
+        new_valid_moves = new_board.get_valid_moves()
+        piece_takes = list(map(lambda x: new_board.check_if_move_takes(x), new_valid_moves))
 
-        ic(new_valid_moves, piece_takes, any(piece_takes), self.applied_piece)
+        ic(new_valid_moves, piece_takes, any(piece_takes), new_board.applied_piece)
 
         if any(piece_takes):
-            return
+            return new_board
         
-        self.applied_piece = None
-        self.player = ~(self.player)+2
-        self.applied_lines = []
-        self.occupied_positions = []
-        ic(self.get_valid_moves())
+        new_board.applied_piece = None
+        new_board.player = ~(new_board.player)+2
+        new_board.applied_lines = []
+        new_board.occupied_positions = []
+        ic(new_board.get_valid_moves())
+        return new_board
         
         
-    def __init__(self) -> None:
-        self.init_pieces()
+    def __init__(self, state=[], applied_lines=[], occupied_positions=[], applied_piece=None, player=0) -> None:
+        if state == []:
+            self.init_pieces()
+        else:
+            self.state = state
+            self.applied_lines = applied_lines
+            self.occupied_positions = occupied_positions
+            self.applied_piece = applied_piece
+            self.player = player
+    
+    def clone_board(self) -> Self:
+        return GameState(
+            deepcopy(self.state), 
+            deepcopy(self.applied_lines), 
+            deepcopy(self.occupied_positions), 
+            self.applied_piece, 
+            self.player)
 
 if __name__ == "__main__":
     ic(Line((1,0), (0,0)) == Line((-1,0),(1,0)))

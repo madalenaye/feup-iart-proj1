@@ -73,7 +73,7 @@ class Board:
         valid_moves = self.state.get_valid_moves()
         if (from_pos, to_pos) not in valid_moves:
             return
-        self.state.apply_move((from_pos, to_pos))
+        self.state = self.state.apply_move((from_pos, to_pos))
         self.draw_pieces(screen)
             
         
