@@ -212,6 +212,7 @@ class GameState:
             self.applied_piece = applied_piece
             self.player = player
     
+    # cloning function in order to avoid python shenanigans with shallow copying
     def clone_board(self) -> Self:
         return GameState(
             deepcopy(self.state), 
@@ -219,6 +220,24 @@ class GameState:
             deepcopy(self.occupied_positions), 
             self.applied_piece, 
             self.player)
+
+    def __eq__(self, __value: object) -> bool:
+        if not isinstance(__value, GameState):
+            return False
+        result = self.state == __value.state 
+        result &= self.applied_lines == __value.applied_lines 
+        result &= self.occupied_positions == __value.occupied_positions 
+        result &= self.applied_piece == __value.applied_piece 
+        result &= self.player == __value.player
+        return result
+
+    def __hash__(self) -> int:
+        return hash((tuple(list(map(lambda x: tuple(x), self.state))), 
+                     tuple(self.applied_lines), 
+                     tuple(self.occupied_positions), 
+                     self.applied_piece, 
+                     self.player))
+        
 
 if __name__ == "__main__":
     ic(Line((1,0), (0,0)) == Line((-1,0),(1,0)))
