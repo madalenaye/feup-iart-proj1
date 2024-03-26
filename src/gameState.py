@@ -128,7 +128,7 @@ class GameState:
                 lambda x: Line((x[1][0]-x[0][0], x[1][1]-x[0][1]), x[0]) not in self.applied_lines,valid_moves
                 ))
         if self.applied_piece is not None:
-            ic(self.applied_piece, valid_moves)
+            # ic(self.applied_piece, valid_moves)
             valid_moves = set(filter(lambda x: x[0] == self.applied_piece, valid_moves))
         if len(self.occupied_positions) != 0:
             valid_moves = set(filter(lambda x: x[1] not in self.occupied_positions, valid_moves))
@@ -187,7 +187,7 @@ class GameState:
         new_valid_moves = new_board.get_valid_moves()
         piece_takes = list(map(lambda x: new_board.check_if_move_takes(x), new_valid_moves))
 
-        ic(new_valid_moves, piece_takes, any(piece_takes), new_board.applied_piece)
+        # ic(new_valid_moves, piece_takes, any(piece_takes), new_board.applied_piece)
 
         if any(piece_takes):
             return new_board
@@ -196,7 +196,7 @@ class GameState:
         new_board.player = ~(new_board.player)+2
         new_board.applied_lines = []
         new_board.occupied_positions = []
-        ic(new_board.get_valid_moves())
+        # ic(new_board.get_valid_moves())
         return new_board
         
         
