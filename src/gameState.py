@@ -147,24 +147,22 @@ class GameState:
         return list(valid_moves)
 
     # tuple has the form: (from_pos, to_pos)
-    def apply_move(self, move: Tuple[Tuple[int,int],Tuple[int,int]]) -> Self:
+    def apply_move(self, move: Tuple[Tuple[int,int],Tuple[int,int]], captureType: CaptureType) -> Self:
         diff = (move[1][0]-move[0][0], move[1][1]-move[0][1])
 
         move_type = self.check_if_move_takes(move)
         new_board = self.clone_board()
-        if move_type == []:
+        if move_type == [] and captureType is None:
             new_board.player = ~(self.player)+2
             return new_board
+        if captureType not in move_type:
+            return self
         
         #replace start pos
         new_board.state[move[1][1]][move[1][0]] = new_board.state[move[0][1]][move[0][0]]
         new_board.state[move[0][1]][move[0][0]] = -1
 
-        # FIXME(luisd): refactor apply_move to accept a move_type as a parameter, 
-        #   because there are cases that can have two valid move types.
-        move_type = move_type[0] 
-
-        if move_type == CaptureType.APPROACH:
+        if captureType == CaptureType.APPROACH:
             curr_coords = (move[1][0] + diff[0], move[1][1] + diff[1])
             # while coordinates are valid
             while curr_coords[0] >= 0 and curr_coords[0] < 9 and curr_coords[1] >= 0 and curr_coords[1] < 5:

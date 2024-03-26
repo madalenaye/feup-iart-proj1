@@ -73,7 +73,10 @@ class Board:
         valid_moves = self.state.get_valid_moves()
         if (from_pos, to_pos) not in valid_moves:
             return
-        self.state = self.state.apply_move((from_pos, to_pos))
+        valid_move_types = self.state.check_if_move_takes((from_pos, to_pos)) 
+        # FIXME(luisd): Refactor this in order to make user choose the capture type if there's multiple capture types
+        self.state = self.state.apply_move((from_pos, to_pos), 
+                                           None if valid_move_types == [] else valid_move_types[0])
         self.draw_pieces(screen)
             
         
