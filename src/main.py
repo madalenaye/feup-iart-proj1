@@ -9,10 +9,16 @@ def main():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     board = Board(screen)
     
+    bg = pygame.image.load('src/images/background.jpeg')
+    bg = pygame.transform.scale(bg, (WIDTH, HEIGHT))
+    
+    pygame.display.set_caption('Main menu')
+    
     run = True
     while run:
-        board.draw_board(screen)
-        board.draw_pieces(screen)
+        screen.blit(bg, (0,0))
+        #board.draw_board(screen)
+        #board.draw_pieces(screen)
     
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
