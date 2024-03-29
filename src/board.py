@@ -13,8 +13,7 @@ class Board:
         
     def draw_board(self,screen):
         
-        board_image = pygame.image.load('assets/images/board.png')
-        screen.blit(board_image, (0,0))
+        screen.fill(BOARD_COLOR)
         rows=len(self.state.state)
         cols = len(self.state.state[0])
         
