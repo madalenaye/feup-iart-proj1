@@ -42,8 +42,8 @@ class MonteCarloNode(TreeNode):
     def expand(self):
         # i think it's best to select a random move from the bunch, to avoid "local optima".
         # In the grand scheme of things, it's okay to do this because MCST is just a statistical method.
-        # next_action = random.choice(self._untried_moves)
-        next_action = self._untried_moves[0]
+        next_action = random.choice(self._untried_moves)
+        # next_action = self._untried_moves[0]
         self._untried_moves.remove(next_action)
 
         new_node = MonteCarloNode(next_action[0], next_action[1], self._intended_player)
@@ -100,9 +100,8 @@ class MonteCarloNode(TreeNode):
         simulations_ran = 0
         while time.time() - start_time < max_computation_time:
             selected_node = self._selection_policy()
-            expanded_node = selected_node.expand()
-            result = expanded_node.simulate()
-            expanded_node.backpropagate(result)
+            result = selected_node.simulate()
+            selected_node.backpropagate(result)
             simulations_ran += 1
 
         print(f"Simulations ran: {simulations_ran}")
@@ -119,5 +118,5 @@ if __name__ == '__main__':
 
     # we start monte carlo on the first move of the black pieces
     monte_carlo = MonteCarloNode(state)
-    best_move = monte_carlo.run_simulation(2.5)
+    best_move = monte_carlo.run_simulation(5)
     print(best_move)
