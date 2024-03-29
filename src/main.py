@@ -1,6 +1,8 @@
 from board import Board
 import pygame
-from constants import * 
+from constants import *
+from montecarlo import MonteCarloNode 
+import time
 
 
 
@@ -31,6 +33,23 @@ def main():
             
         if board.selected_piece:
             board.draw_valid_moves(screen, row, col)
+
+        # if board.state.player == 1:
+        #     board.draw_board(screen)
+        #     board.draw_pieces(screen)
+        #     pygame.display.update()
+
+        #     print("running monte carlo")
+        #     monte_carlo = MonteCarloNode(board.state.clone_board())
+        #     node = monte_carlo.run_simulation(2.5)
+        #     print("found move")
+        #     for move in node.moves:
+        #         board.state = board.state.apply_move(move[0], move[1])
+        #         board.draw_board(screen)
+        #         board.draw_pieces(screen)
+        #         pygame.display.update()
+        #         pygame.time.wait(1000)
+                
         
         pygame.display.update()
     pygame.quit()

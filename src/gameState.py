@@ -153,6 +153,8 @@ class GameState:
         move_type = self.check_if_move_takes(move)
         new_board = self.clone_board()
         if move_type == [] and captureType is None:
+            new_board.state[move[1][1]][move[1][0]] = new_board.state[move[0][1]][move[0][0]]
+            new_board.state[move[0][1]][move[0][0]] = -1
             new_board.player = ~(self.player)+2
             return new_board
         if captureType not in move_type:
@@ -212,10 +214,11 @@ class GameState:
     
     # cloning function in order to avoid python shenanigans with shallow copying
     def clone_board(self) -> Self:
+        cloned_state = list(map(lambda x: x.copy(), self.state))
         return GameState(
-            deepcopy(self.state), 
-            deepcopy(self.applied_lines), 
-            deepcopy(self.occupied_positions), 
+            cloned_state, 
+            self.applied_lines.copy(), 
+            self.occupied_positions.copy(), 
             self.applied_piece, 
             self.player)
 
@@ -235,6 +238,17 @@ class GameState:
                      tuple(self.occupied_positions), 
                      self.applied_piece, 
                      self.player))
+
+    def check_win_condition(self) -> int:
+        """
+            Returns 0 if black won, 1 if white won or -1 if the game continues
+        """
+        flattened_state = [item for row in self.state for item in row]
+        if(not any(map(lambda x: x == 1, flattened_state))):
+            return 0
+        if(not any(map(lambda x: x == 0, flattened_state))):
+            return 1
+        return -1
         
 
 if __name__ == "__main__":
@@ -246,4 +260,4 @@ if __name__ == "__main__":
     gs.apply_move(valid_moves[0])
     ic(gs.state)
     ic(gs.player)
-    ic(gs.get_valid_moves())
+    ic(gs.get_valid_moves())        

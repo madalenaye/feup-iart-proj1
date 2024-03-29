@@ -6,17 +6,18 @@ MoveType = Tuple[Tuple[Tuple[int, int], Tuple[int, int]], CaptureType]
 
 class TreeNode:
     state: GameState
-    moves: List[MoveType] = []
+    moves: List[MoveType]
     previous: Self = None
-    children: List[Self] = []
+    children: List[Self]
 
     def __init__(self, state, moves = []) -> None:
         self.state = state
-        self.moves = []
+        self.moves = moves
+        self.children = []
 
     def add_children(self, child: Self):
-        child.previous = self
         self.children.append(child)
+        child.previous = self
 
 
 # This assumes that capture is always obligatory.
