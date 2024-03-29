@@ -1,4 +1,6 @@
-from typing import Self, Tuple, List
+from typing import Tuple, List
+from typing_extensions import Self
+
 from icecream import ic
 from dataclasses import dataclass
 from copy import deepcopy
@@ -24,15 +26,15 @@ class Line:
         # Handle division by 0 by checking if the other vector component isn't zero (because it will cause an
         #   indeterminate result, we also check if the there's no difference in the intial points on that 
         #   component
-        try:
-            k_x = (self.initial_point[0] - __value.initial_point[0])/self.vector[0]
-        except ZeroDivisionError:
+        if(self.vector[0] == 0):
             return self.vector[1] != 0 and (self.initial_point[0] - __value.initial_point[0]) == 0
-        
-        try:
-            k_y = (self.initial_point[1] - __value.initial_point[1])/self.vector[1]
-        except ZeroDivisionError:
+        k_x = (self.initial_point[0] - __value.initial_point[0])/self.vector[0]
+
+        if(self.vector[1] == 0):
             return self.vector[0] != 0 and (self.initial_point[1] - __value.initial_point[1]) == 0
+        
+        k_y = (self.initial_point[1] - __value.initial_point[1])/self.vector[1]
+
         
         if k_x != k_y:
             return False
@@ -89,9 +91,8 @@ class GameState:
                 (pos[0]+1, pos[1]-1)
             ])
 
-        return list(
-                filter(lambda x: x[1] >= 0 and x[1] < 5, 
-                filter(lambda x: x[0] >= 0 and x[0] < 9, all_squares)))
+        return filter(lambda x: x[1] >= 0 and x[1] < 5, 
+                filter(lambda x: x[0] >= 0 and x[0] < 9, all_squares))
 
     # tuple has the form: (from_pos, to_pos)
     def check_if_move_takes(self, move: Tuple[Tuple[int,int],Tuple[int,int]]) -> List[CaptureType]:
@@ -112,26 +113,24 @@ class GameState:
 
     # tuple has the form: (from_pos, to_pos)
     def get_valid_moves(self) -> List[Tuple[Tuple[int,int],Tuple[int,int]]]:
-        valid_moves = set()
-        player_pieces = [(x,y) for y,row in enumerate(self.state) for x,value in enumerate(row) if value == self.player]
-
-        for piece in player_pieces:
-            # check if adjcent square is free
-            empty_squares = filter(lambda x: self.state[x[1]][x[0]] == -1,
-                                    self.get_adjacent_squares(piece))
-            for empty_square in empty_squares:
-                valid_moves.add((piece, empty_square))
+        valid_moves = set(
+            [(start_pos, empty_square) 
+            for start_pos in [(x,y) for y,row in enumerate(self.state)for x,value in enumerate(row) if value == self.player]
+            for empty_square in filter(lambda x: self.state[x[1]][x[0]] == -1,
+                self.get_adjacent_squares(start_pos))
+        ])
         
         #filter valid moves by checking if the line has been already used
-        valid_moves = set(
-            filter(
+        valid_moves = filter(
                 lambda x: Line((x[1][0]-x[0][0], x[1][1]-x[0][1]), x[0]) not in self.applied_lines,valid_moves
-                ))
+                )
         if self.applied_piece is not None:
             # ic(self.applied_piece, valid_moves)
-            valid_moves = set(filter(lambda x: x[0] == self.applied_piece, valid_moves))
+            valid_moves = filter(lambda x: x[0] == self.applied_piece, valid_moves)
         if len(self.occupied_positions) != 0:
-            valid_moves = set(filter(lambda x: x[1] not in self.occupied_positions, valid_moves))
+            valid_moves = filter(lambda x: x[1] not in self.occupied_positions, valid_moves)
+
+        valid_moves = set(valid_moves)
 
         piece_takes = list(map(lambda x: self.check_if_move_takes(x), valid_moves))
         if any(piece != [] for piece in piece_takes):
@@ -153,6 +152,8 @@ class GameState:
         move_type = self.check_if_move_takes(move)
         new_board = self.clone_board()
         if move_type == [] and captureType is None:
+            new_board.state[move[1][1]][move[1][0]] = new_board.state[move[0][1]][move[0][0]]
+            new_board.state[move[0][1]][move[0][0]] = -1
             new_board.player = ~(self.player)+2
             return new_board
         if captureType not in move_type:
@@ -212,10 +213,11 @@ class GameState:
     
     # cloning function in order to avoid python shenanigans with shallow copying
     def clone_board(self) -> Self:
+        cloned_state = list(map(lambda x: x.copy(), self.state))
         return GameState(
-            deepcopy(self.state), 
-            deepcopy(self.applied_lines), 
-            deepcopy(self.occupied_positions), 
+            cloned_state, 
+            self.applied_lines.copy(), 
+            self.occupied_positions.copy(), 
             self.applied_piece, 
             self.player)
 
@@ -235,6 +237,17 @@ class GameState:
                      tuple(self.occupied_positions), 
                      self.applied_piece, 
                      self.player))
+
+    def check_win_condition(self) -> int:
+        """
+            Returns 0 if black won, 1 if white won or -1 if the game continues
+        """
+        flattened_state = [item for row in self.state for item in row]
+        if(not any(map(lambda x: x == 1, flattened_state))):
+            return 0
+        if(not any(map(lambda x: x == 0, flattened_state))):
+            return 1
+        return -1
         
 
 if __name__ == "__main__":
@@ -246,4 +259,4 @@ if __name__ == "__main__":
     gs.apply_move(valid_moves[0])
     ic(gs.state)
     ic(gs.player)
-    ic(gs.get_valid_moves())
+    ic(gs.get_valid_moves())        

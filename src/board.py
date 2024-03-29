@@ -4,7 +4,7 @@ from icecream import ic
 import pygame
 
 class Board:
-    state = GameState()
+    state : GameState = GameState()
     selected_piece = None
      
     def __init__(self, screen) -> None:
@@ -78,6 +78,7 @@ class Board:
         # FIXME(luisd): Refactor this in order to make user choose the capture type if there's multiple capture types
         self.state = self.state.apply_move((from_pos, to_pos), 
                                            None if valid_move_types == [] else valid_move_types[0])
+        ic(self.state.check_win_condition())
         self.draw_pieces(screen)
             
         
