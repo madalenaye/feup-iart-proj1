@@ -235,6 +235,16 @@ class GameState:
                      tuple(self.occupied_positions), 
                      self.applied_piece, 
                      self.player))
+
+    def check_win_condition(self) -> int:
+        """
+            Returns 0 if black won, 1 if white won or -1 if the game continues
+        """
+        if(not any(map(lambda x: x == 1), self.state)):
+            return 0
+        if(not any(map(lambda x: x == 0), self.state)):
+            return 1
+        return -1
         
 
 if __name__ == "__main__":
