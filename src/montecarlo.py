@@ -97,11 +97,15 @@ class MonteCarloNode(TreeNode):
         """
 
         start_time = time.time()
+        simulations_ran = 0
         while time.time() - start_time < max_computation_time:
             selected_node = self._selection_policy()
             expanded_node = selected_node.expand()
             result = expanded_node.simulate()
             expanded_node.backpropagate(result)
+            simulations_ran += 1
+
+        print(f"Simulations ran: {simulations_ran}")
 
         return self.best_child()
 
@@ -115,5 +119,5 @@ if __name__ == '__main__':
 
     # we start monte carlo on the first move of the black pieces
     monte_carlo = MonteCarloNode(state)
-    best_move = monte_carlo.run_simulation()
+    best_move = monte_carlo.run_simulation(2.5)
     print(best_move)
