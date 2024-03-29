@@ -1,4 +1,6 @@
-from typing import Self, Tuple, List
+from typing import Tuple, List
+from typing_extensions import Self
+
 from icecream import ic
 from dataclasses import dataclass
 from copy import deepcopy
