@@ -1,4 +1,5 @@
-from typing import Iterator, List, Self, Tuple
+from typing import Iterator, List, Tuple
+from typing_extensions import Self
 from gameState import CaptureType, GameState
 from icecream import ic
 

@@ -38,10 +38,11 @@ def main():
         #     board.draw_board(screen)
         #     board.draw_pieces(screen)
         #     pygame.display.update()
-
+        #     if(board.state.check_win_condition() != -1):
+        #         break
         #     print("running monte carlo")
         #     monte_carlo = MonteCarloNode(board.state.clone_board())
-        #     node = monte_carlo.run_simulation(2.5)
+        #     node = monte_carlo.run_simulation(5)
         #     print("found move")
         #     for move in node.moves:
         #         board.state = board.state.apply_move(move[0], move[1])
