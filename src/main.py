@@ -1,31 +1,26 @@
 from board import Board
 import pygame
 from constants import * 
-from button import Button
+from menu import *
+import sys
 
-def font(size):
-    return pygame.font.Font('assets/fonts/Tenada.ttf', size)
 
-def main():
-    pygame.init()
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.init()
+
+def play(screen):
+    pygame.display.set_caption('Fanorona')
     board = Board(screen)
-    
-    bg = pygame.image.load('assets/images/background.jpg')
-    start_button = Button(WIDTH//2 - 150, HEIGHT//2 - 50, pygame.image.load('assets/images/start-btn.png'))
-    start_button.image = pygame.transform.scale(start_button.image, (300, 100))
-    pygame.display.set_caption('Main menu')
-    
     run = True
     while run:
-        screen.blit(bg, (0,0))
-        start_button.draw_button(screen)
-        #board.draw_board(screen)
-        #board.draw_pieces(screen)
-        
+        board.draw_board(screen)
+        board.draw_pieces(screen)
+        home_button.draw_button(screen)
+        retry_button.draw_button(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                pygame.quit()
+                sys.exit()
                 
             if event.type == pygame.MOUSEBUTTONDOWN and not board.selected_piece:
                 pos = pygame.mouse.get_pos()
@@ -42,6 +37,36 @@ def main():
             board.draw_valid_moves(screen, row, col)
         
         pygame.display.update()
+        
+        
+        
+def main():
+    
+    screen = pygame.display.set_mode((WIDTH, HEIGHT + 2 * PADDING))
+
+    run = True
+    while run:
+        
+        draw_main_menu(screen)
+              
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if start_button.selected(pygame.mouse.get_pos()):
+                    play(screen)
+                if options_button.selected(pygame.mouse.get_pos()):
+                    print('Options button clicked')
+                if quit_button.selected(pygame.mouse.get_pos()):
+                    run = False
+                
+        mouse_pos = pygame.mouse.get_pos()
+        start_button.update(mouse_pos)
+        options_button.update(mouse_pos)
+        quit_button.update(mouse_pos)
+        pygame.display.update()
+        
     pygame.quit()
     
 
