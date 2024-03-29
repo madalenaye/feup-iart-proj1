@@ -6,6 +6,7 @@ import sys
 
 
 pygame.init()
+screen = pygame.display.set_mode((WIDTH, HEIGHT + 2 * PADDING))
 
 def play(screen):
     pygame.display.set_caption('Fanorona')
@@ -21,7 +22,13 @@ def play(screen):
                 run = False
                 pygame.quit()
                 sys.exit()
-                
+            
+            if event.type == pygame.MOUSEBUTTONDOWN and (home_button.selected(pygame.mouse.get_pos()) or retry_button.selected(pygame.mouse.get_pos())):
+                if home_button.selected(pygame.mouse.get_pos()):
+                    main()
+                if retry_button.selected(pygame.mouse.get_pos()):
+                    board = Board(screen)
+                    continue
             if event.type == pygame.MOUSEBUTTONDOWN and not board.selected_piece:
                 pos = pygame.mouse.get_pos()
                 row, col = board.get_row_col_from_mouse(pos)
@@ -33,16 +40,18 @@ def play(screen):
                 board.draw_move(screen, board.selected_piece, (col,row))
                 board.selected_piece = None
             
+            
         if board.selected_piece:
             board.draw_valid_moves(screen, row, col)
+        
+        home_button.update(pygame.mouse.get_pos())
+        retry_button.update(pygame.mouse.get_pos())
         
         pygame.display.update()
         
         
         
 def main():
-    
-    screen = pygame.display.set_mode((WIDTH, HEIGHT + 2 * PADDING))
 
     run = True
     while run:
@@ -68,6 +77,7 @@ def main():
         pygame.display.update()
         
     pygame.quit()
+    sys.exit()
     
 
 if __name__ == '__main__':

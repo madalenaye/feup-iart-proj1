@@ -7,7 +7,7 @@ class Button():
     def draw_button(self, screen):
         if self.hovered:
             image_copy = self.image.copy()
-            image_copy.set_alpha(228)
+            image_copy.set_alpha(220)
             screen.blit(image_copy, (self.rect.x, self.rect.y))
         else:
             screen.blit(self.image, (self.rect.x, self.rect.y))
