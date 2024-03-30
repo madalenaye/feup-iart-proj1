@@ -50,8 +50,8 @@ class Board:
                 y = row * SQUARE_SIZE + SQUARE_SIZE / 2
                 i = self.state.state[row][col]
                 if i != -1:
-                    pygame.draw.circle(screen, BLACK, (x, HEIGHT-y), 27)
-                    pygame.draw.circle(screen,  colors[i], (x, HEIGHT-y), 25)
+                    pygame.draw.circle(screen, BLACK, (x, HEIGHT-y), 25)
+                    pygame.draw.circle(screen,  colors[i], (x, HEIGHT-y), 23)
     
     def get_row_col_from_mouse(self, pos):
         x, y = pos

@@ -94,6 +94,7 @@ if __name__ == '__main__':
     # Here you can see how to get the next moves, you want to incorporate a version of this into your search function.
     #  get_next_moves() is lazy so you can stop the get_next_moves in the middle (in case of alpha beta pruning) in a
     #  more efficient way
+    ic(list(get_next_moves(GameState())))
     node = TreeNode(GameState())
     for i in get_next_moves(node.state):
         child_node = TreeNode(i[0], i[1])
