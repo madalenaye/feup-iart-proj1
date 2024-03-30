@@ -4,6 +4,7 @@ from constants import *
 from menu import *
 import sys
 from montecarlo import MonteCarloNode, CustomPolicyMonteCarloNode
+from gameTree import greedy, TreeNode
 import time
 
 
@@ -46,6 +47,18 @@ def play(screen):
         if board.selected_piece:
             board.draw_valid_moves(screen, row, col)
 
+        if board.state.player == 0:
+
+            if(board.state.check_win_condition() != -1):
+                break
+            print("running greedy")
+            moves = greedy(board.state)
+            for move in moves:
+                board.state = board.state.apply_move(move[0], move[1])
+                board.draw_board(screen)
+                board.draw_pieces(screen)
+                pygame.display.update()
+                pygame.time.wait(1000)
         # if board.state.player == 1:
         #     board.draw_board(screen)
         #     board.draw_pieces(screen)

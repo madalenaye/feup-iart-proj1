@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from copy import deepcopy
 from enum import Enum
 
-CaptureType = Enum('CaptureType', ['APPROACH', 'WITHDRAWALL'])
+CaptureType = Enum('CaptureType', ['APPROACH', 'WITHDRAWAL'])
 
 @dataclass
 class Line:
@@ -104,7 +104,7 @@ class GameState:
         # check if there's a piece behind the source piece (attack by withdrawal) and then check if the destiination piece is empty
         if (move[0][1] - diff[1] >= 0 and move[0][1] - diff[1] < 5 and move[0][0] - diff[0] >= 0 and move[0][0] - diff[0] < 9):
             if self.state[move[1][1]][move[1][0]] == -1 and self.state[move[0][1] - diff[1]][move[0][0] - diff[0]] == ~(self.player)+2:
-                result.append(CaptureType.WITHDRAWALL)
+                result.append(CaptureType.WITHDRAWAL)
     
         return result
 
@@ -292,6 +292,12 @@ class GameState:
                     result += 1
         return result
 
+    def evaluate_game_state(self) -> int:
+        white_points = sum(row.count(0) for row in self.state)
+        black_points = sum(row.count(1) for row in self.state)
+        return white_points - black_points
+
+        
 
 if __name__ == "__main__":
     ic(Line((1,0), (0,0)) == Line((-1,0),(1,0)))

@@ -20,6 +20,10 @@ class TreeNode:
         self.children.append(child)
         child.previous = self
 
+    def generate_children(self):
+        for new_state, move in get_next_moves(self.state):
+            new_node = TreeNode(new_state, move)
+            self.add_children(new_node)
 
 # This assumes that capture is always obligatory.
 def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, MoveType]]:
@@ -53,6 +57,26 @@ def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, MoveTyp
     
     yield from helper(intial_state, [])
 
+
+def greedy(state: GameState) -> List[MoveType]:
+    
+    node = TreeNode(state)
+    scores = []
+    
+    for i in get_next_moves(node.state):
+        child_node = TreeNode(i[0], i[1])
+        node.add_children(child_node)
+        
+    for child in node.children:
+        new_state = child.state
+        score = abs(new_state.evaluate_game_state())
+        print(score)
+        scores.append((child, score))
+        
+
+    best_child = max(scores, key=lambda x: x[1])
+    print(best_child[0].moves)
+    return best_child[0].moves
     
     
 
@@ -65,3 +89,9 @@ if __name__ == '__main__':
     for i in get_next_moves(node.state):
         child_node = TreeNode(i[0], i[1])
         node.add_children(child_node)
+    
+    state = GameState()
+    mov = greedy(state, 1)
+    for (i, j) in mov:
+        new_state = state.apply_move(i, j)
+    ic(greedy(new_state, 0))
