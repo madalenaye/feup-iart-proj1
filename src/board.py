@@ -79,7 +79,7 @@ class Board:
                 # Convert next state to TreeNode
                 next_node = TreeNode(next_state)
                 # Call minimax function to get the value
-                minimax_value = minimax(next_node, depth=4, current_player=False)  # Adjust depth as needed
+                minimax_value = minimax(next_node, depth=4, current_player=next_state.player)  # Adjust depth as needed
 
                 # Update best move if necessary
                 if minimax_value > best_minimax_value:
