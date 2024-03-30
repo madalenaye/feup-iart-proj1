@@ -110,12 +110,11 @@ class GameState:
 
     # tuple has the form: (from_pos, to_pos)
     def get_valid_moves(self) -> List[Tuple[Tuple[int,int],Tuple[int,int]]]:
-        valid_moves = set(
-            [(start_pos, empty_square) 
+        valid_moves = [(start_pos, empty_square) 
             for start_pos in [(x,y) for y,row in enumerate(self.state)for x,value in enumerate(row) if value == self.player]
             for empty_square in filter(lambda x: self.state[x[1]][x[0]] == -1,
                 self.get_adjacent_squares(start_pos))
-        ])
+        ]
         
         #filter valid moves by checking if the line has been already used
         valid_moves = filter(
@@ -129,7 +128,7 @@ class GameState:
             valid_moves = filter(lambda x: self.check_if_move_takes(x) != [], valid_moves)
             return list(valid_moves)
 
-        valid_moves = set(valid_moves)
+        valid_moves = list(valid_moves)
 
         piece_takes = list(map(self.check_if_move_takes, valid_moves))
         if any(piece != [] for piece in piece_takes):
@@ -142,7 +141,7 @@ class GameState:
                     )
                 )
         
-        return list(valid_moves)
+        return valid_moves
     
     def get_first_valid_move(self) -> Tuple[Tuple[int,int],Tuple[int,int]]:
         """
