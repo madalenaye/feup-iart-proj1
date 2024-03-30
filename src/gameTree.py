@@ -57,28 +57,33 @@ def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, MoveTyp
     yield from helper(intial_state, [])
 
 
-def minimax(node: TreeNode, depth: int, maximizing_player: bool) -> int:
+def minimax(node: TreeNode, depth: int, current_player: bool) -> int:
     """
     Minimax algorithm implementation.
     """
 
     node.generate_children()
 
-    print(len(node.children))
+    print("========MINIMAX=========")
+
+    print("Number of children-",len(node.children))
+    print("Player-",current_player)
+    print("Depth-",depth) 
+
 
     if depth == 0 or not node.children:
         return node.state.evaluate_game_state()
 
-    if maximizing_player:
+    if not current_player:
         max_eval = float('-inf')
         for child in node.children:
-            eval_child = minimax(child, depth - 1, False)
+            eval_child = minimax(child, depth - 1, child.state.player)
             max_eval = max(max_eval, eval_child)
         return max_eval
     else:
         min_eval = float('inf')
         for child in node.children:
-            eval_child = minimax(child, depth - 1, True)
+            eval_child = minimax(child, depth - 1, child.state.player)
             min_eval = min(min_eval, eval_child)
         return min_eval
 

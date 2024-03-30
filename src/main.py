@@ -18,7 +18,6 @@ def main():
     
     run = True
     while run:
-        print("PLAYER", board.state.player)
         board.draw_board(screen)
         board.draw_pieces(screen)
 
