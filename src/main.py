@@ -1,7 +1,7 @@
 from board import Board
 import pygame
 from constants import *
-from montecarlo import MonteCarloNode 
+from montecarlo import MonteCarloNode, CustomPolicyMonteCarloNode
 import time
 
 

@@ -16,8 +16,6 @@ class Line:
     # check if lines are equal by checking colinearity and if the point can be calculated
     # by the other vector
     def __eq__(self, __value: object) -> bool:
-        if type(__value) != type(self):
-            return False
         #check if vector is colinear by doing the dot product
         dot_z = self.vector[0]*__value.vector[1] - self.vector[1]*__value.vector[0]
         if dot_z != 0:
@@ -40,7 +38,6 @@ class Line:
             return False
         return True
 
-
 class GameState:
     # the state is a 2D list 5x9 where (the board is inverted vertically relative to real life):
     #   -1 -> represents an empty slot
@@ -48,8 +45,8 @@ class GameState:
     #   1  -> represents a black piece
     state = [[-1 for _ in range(0, 9)] for _ in range(0,5)]
 
-    applied_lines: List[Line] = []
-    occupied_positions: List[Tuple[int,int]] = []
+    applied_lines: List[Line]
+    occupied_positions: List[Tuple[int,int]]
 
     applied_piece: Tuple[int, int] = None
 
@@ -132,7 +129,7 @@ class GameState:
 
         valid_moves = set(valid_moves)
 
-        piece_takes = list(map(lambda x: self.check_if_move_takes(x), valid_moves))
+        piece_takes = list(map(self.check_if_move_takes, valid_moves))
         if any(piece != [] for piece in piece_takes):
             # return only the pieces that takes a enemy piece
             return list(
@@ -144,6 +141,28 @@ class GameState:
                 )
         
         return list(valid_moves)
+    
+    def get_first_valid_move(self) -> Tuple[Tuple[int,int],Tuple[int,int]]:
+        """
+            This function is only meant to optimize apply_move and avoid redudant calculations.
+        """
+        valid_moves = [(start_pos, empty_square) 
+            for start_pos in [(x,y) for y,row in enumerate(self.state)for x,value in enumerate(row) if value == self.player]
+            for empty_square in filter(lambda x: self.state[x[1]][x[0]] == -1,
+                self.get_adjacent_squares(start_pos))]
+                
+        valid_moves = filter(
+                lambda x: Line((x[1][0]-x[0][0], x[1][1]-x[0][1]), x[0]) not in self.applied_lines,valid_moves
+                )
+
+        if self.applied_piece is not None:
+            # ic(self.applied_piece, valid_moves)
+            valid_moves = filter(lambda x: x[0] == self.applied_piece, valid_moves)
+        if len(self.occupied_positions) != 0:
+            valid_moves = filter(lambda x: x[1] not in self.occupied_positions, valid_moves)
+        
+        return next(valid_moves, None)
+
 
     # tuple has the form: (from_pos, to_pos)
     def apply_move(self, move: Tuple[Tuple[int,int],Tuple[int,int]], captureType: CaptureType) -> Self:
@@ -185,13 +204,14 @@ class GameState:
         new_board.applied_piece = move[1]
         new_board.occupied_positions.append(move[0])
         new_board.applied_lines.append(Line(diff, move[0]))
-        new_valid_moves = new_board.get_valid_moves()
-        piece_takes = list(map(lambda x: new_board.check_if_move_takes(x), new_valid_moves))
+        new_valid_move = new_board.get_first_valid_move()
+
 
         # ic(new_valid_moves, piece_takes, any(piece_takes), new_board.applied_piece)
-
-        if any(piece_takes):
-            return new_board
+        if new_valid_move != None:
+            piece_takes = new_board.check_if_move_takes(new_valid_move)
+            if piece_takes != []:
+                return new_board
         
         new_board.applied_piece = None
         new_board.player = ~(new_board.player)+2
@@ -204,6 +224,8 @@ class GameState:
     def __init__(self, state=[], applied_lines=[], occupied_positions=[], applied_piece=None, player=0) -> None:
         if state == []:
             self.init_pieces()
+            self.applied_lines = []
+            self.occupied_positions = []
         else:
             self.state = state
             self.applied_lines = applied_lines
@@ -248,7 +270,15 @@ class GameState:
         if(not any(map(lambda x: x == 0, flattened_state))):
             return 1
         return -1
-        
+    
+    def get_total_number_of_pieces(self) -> int:
+        result = 0
+        for row in self.state:
+            for piece in row:
+                if piece != -1:
+                    result += 1
+        return result
+
 
 if __name__ == "__main__":
     ic(Line((1,0), (0,0)) == Line((-1,0),(1,0)))

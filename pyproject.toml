@@ -13,6 +13,9 @@ icecream = "^2.1.3"
 typing-extensions = "^4.10.0"
 
 
+[tool.poetry.group.dev.dependencies]
+pyinstrument = "^4.6.2"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
