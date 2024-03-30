@@ -3,7 +3,7 @@ import pygame
 from constants import * 
 from menu import *
 import sys
-from montecarlo import MonteCarloNode 
+from montecarlo import MonteCarloNode, CustomPolicyMonteCarloNode
 import time
 
 
