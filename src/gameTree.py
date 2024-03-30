@@ -1,5 +1,4 @@
 from typing import Iterator, List, Tuple
-from typing_extensions import Self
 from gameState import CaptureType, GameState
 from icecream import ic
 
@@ -8,18 +7,22 @@ MoveType = Tuple[Tuple[Tuple[int, int], Tuple[int, int]], CaptureType]
 class TreeNode:
     state: GameState
     moves: List[MoveType]
-    previous: Self = None
-    children: List[Self]
+    previous: 'TreeNode' = None
+    children: List['TreeNode']
 
     def __init__(self, state, moves = []) -> None:
         self.state = state
         self.moves = moves
         self.children = []
 
-    def add_children(self, child: Self):
+    def add_children(self, child: 'TreeNode'):
         self.children.append(child)
         child.previous = self
 
+    def generate_children(self):
+        for new_state, move in get_next_moves(self.state):
+            new_node = TreeNode(new_state, move)
+            self.add_children(new_node)
 
 # This assumes that capture is always obligatory.
 def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, MoveType]]:
@@ -52,6 +55,32 @@ def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, MoveTyp
                 
     
     yield from helper(intial_state, [])
+
+
+def minimax(node: TreeNode, depth: int, maximizing_player: bool) -> int:
+    """
+    Minimax algorithm implementation.
+    """
+
+    node.generate_children()
+
+    print(len(node.children))
+
+    if depth == 0 or not node.children:
+        return node.state.evaluate_game_state()
+
+    if maximizing_player:
+        max_eval = float('-inf')
+        for child in node.children:
+            eval_child = minimax(child, depth - 1, False)
+            max_eval = max(max_eval, eval_child)
+        return max_eval
+    else:
+        min_eval = float('inf')
+        for child in node.children:
+            eval_child = minimax(child, depth - 1, True)
+            min_eval = min(min_eval, eval_child)
+        return min_eval
 
     
     

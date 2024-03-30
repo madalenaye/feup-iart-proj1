@@ -2,6 +2,7 @@ from board import Board
 import pygame
 from constants import *
 from montecarlo import MonteCarloNode 
+from gameTree import minimax,TreeNode
 import time
 
 
@@ -10,11 +11,20 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     board = Board(screen)
+
+    board.draw_board(screen)
+    board.draw_pieces(screen)
+    pygame.display.update()
     
     run = True
     while run:
+        print("PLAYER", board.state.player)
         board.draw_board(screen)
         board.draw_pieces(screen)
+
+        if board.state.player == 0:
+            pygame.display.update()
+            board.execute_best_move(screen)
     
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -50,8 +60,10 @@ def main():
         #         board.draw_pieces(screen)
         #         pygame.display.update()
         #         pygame.time.wait(1000)
-                
-        
+
+
+
+            
         pygame.display.update()
     pygame.quit()
     
