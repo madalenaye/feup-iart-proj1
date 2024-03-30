@@ -19,13 +19,8 @@ class TreeNode:
         self.children.append(child)
         child.previous = self
 
-    def generate_children(self):
-        for new_state, move in get_next_moves(self.state):
-            new_node = TreeNode(new_state, move)
-            self.add_children(new_node)
-
 # This assumes that capture is always obligatory.
-def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, MoveType]]:
+def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, List[MoveType]]]:
     """
         This takes a GameState and returns all sequences of moves lazily. This returns a tuple with
         the new GameState (where it's always the opposite player's turn) and the sequence of moves required
@@ -41,7 +36,7 @@ def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, MoveTyp
             yield (new_state, [(i, None)])
         return
 
-    def helper(state:GameState, list_moves:List[MoveType]) -> Iterator[Tuple[GameState, MoveType]]:
+    def helper(state:GameState, list_moves:List[MoveType]) -> Iterator[Tuple[GameState, List[MoveType]]]:
         new_moves = state.get_valid_moves()
         for capture_move in new_moves:
             types = state.check_if_move_takes(capture_move)
@@ -57,33 +52,25 @@ def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, MoveTyp
     yield from helper(intial_state, [])
 
 
-def minimax(node: TreeNode, depth: int, current_player: bool) -> int:
+def minimax(node: GameState, depth: int, ai_player: int) -> int:
     """
     Minimax algorithm implementation.
     """
 
-    node.generate_children()
 
-    print("========MINIMAX=========")
+    if depth == 0:
+        return node.evaluate_game_state(ai_player)
 
-    print("Number of children-",len(node.children))
-    print("Player-",current_player)
-    print("Depth-",depth) 
-
-
-    if depth == 0 or not node.children:
-        return node.state.evaluate_game_state()
-
-    if not current_player:
+    if ai_player == node.player:
         max_eval = float('-inf')
-        for child in node.children:
-            eval_child = minimax(child, depth - 1, child.state.player)
+        for next_state, _ in get_next_moves(node):
+            eval_child = minimax(next_state, depth - 1, ai_player)
             max_eval = max(max_eval, eval_child)
         return max_eval
     else:
         min_eval = float('inf')
-        for child in node.children:
-            eval_child = minimax(child, depth - 1, child.state.player)
+        for next_state, _ in get_next_moves(node):
+            eval_child = minimax(next_state, depth - 1, ai_player)
             min_eval = min(min_eval, eval_child)
         return min_eval
 

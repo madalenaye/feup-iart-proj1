@@ -282,10 +282,13 @@ class GameState:
             return 1
         return -1
     
-    def evaluate_game_state(self) -> int:
+    def evaluate_game_state(self, player: int) -> int:
         white_points = sum(row.count(0) for row in self.state)
         black_points = sum(row.count(1) for row in self.state)
-        return white_points - black_points
+        if player == 1:
+            return black_points - white_points
+        if player == 0:
+            return white_points - black_points
             
     def get_total_number_of_pieces(self) -> int:
         result = 0

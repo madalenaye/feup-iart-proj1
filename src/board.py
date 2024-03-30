@@ -1,3 +1,4 @@
+import time
 from gameState import GameState
 from gameTree import *
 from constants import *
@@ -8,7 +9,7 @@ class Board:
     state : GameState = GameState()
     selected_piece = None
      
-    def __init__(self, screen) -> None:
+    def __init__(self) -> None:
         self.state.init_pieces()
     
     def draw_board(self,screen):
@@ -69,28 +70,21 @@ class Board:
             if (from_pos[0] == col and from_pos[1] == row):
                 pygame.draw.circle(screen, GRAY, (to_pos[0] * SQUARE_SIZE + SQUARE_SIZE / 2, (4-to_pos[1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 25)
     
-    def execute_best_move(self, screen) -> None:
-        if self.state.player == 0:
-            best_minimax_value = float('-inf')
-            best_move = None
+    def execute_best_move(self) -> List[MoveType]:
+        best_minimax_value = float('-inf')
+        best_move = None
 
-            # Iterate over possible moves for player 0
-            for next_state, move in get_next_moves(self.state):
-                # Convert next state to TreeNode
-                next_node = TreeNode(next_state)
-                # Call minimax function to get the value
-                minimax_value = minimax(next_node, depth=4, current_player=next_state.player)  # Adjust depth as needed
+        for next_state, moves in get_next_moves(self.state):
+            # Call minimax function to get the value
+            minimax_value = minimax(next_state, depth=3, ai_player=self.state.player)  # Adjust depth as needed
 
-                # Update best move if necessary
-                if minimax_value > best_minimax_value:
-                    best_minimax_value = minimax_value
-                    best_move = move
-            # Execute the best move
-            if best_move is not None:
-                if best_move[0] is not None:
-                    if best_move[0][0] is not None:
-                        from_pos, to_pos = best_move[0][0]
-                        self.draw_move(screen, from_pos, to_pos)
+            # Update best move if necessary
+            if minimax_value > best_minimax_value:
+                best_minimax_value = minimax_value
+                best_move = moves
+        # Execute the best move
+        return best_move
+
 
     def draw_move(self, screen, from_pos, to_pos):
         valid_moves = self.state.get_valid_moves()
@@ -102,8 +96,12 @@ class Board:
                                            None if valid_move_types == [] else valid_move_types[0])
         ic(self.state.check_win_condition())
         self.draw_pieces(screen)
-        print("Score: White has more" , self.state.evaluate_game_state(), "pieces than Black")
+
             
         
     
-    
+if __name__ == '__main__':
+    board = Board()
+    start = time.time()
+    board.execute_best_move()
+    print(f"Took {time.time() - start}s")
