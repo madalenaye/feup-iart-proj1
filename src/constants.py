@@ -7,6 +7,8 @@ WHITE = (255,255,255)
 BLACK = (0,0,0)
 BLACK_PIECE = (26,31,36)
 GRAY = (245, 245, 245)
+GREEN = (185, 222, 192)
+BROWN = (160, 78, 56)
 colors = {
     0: WHITE,
     1: BLACK_PIECE,

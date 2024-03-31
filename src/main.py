@@ -1,17 +1,41 @@
 from board import Board
 import pygame
+import pygame_menu
 from constants import * 
 from menu import *
 import sys
 from montecarlo import MonteCarloNode, CustomPolicyMonteCarloNode
-from gameTree import greedy, TreeNode, minimax
+from gameTree import greedy, TreeNode
 import time
 
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT + 2 * PADDING))
 
+
+def options(screen):
+    
+    pygame.display.set_caption('Options')
+    select_menu = pygame_menu.Menu('Select mode',WIDTH, HEIGHT + 2 * PADDING, theme=theme)
+    draw_select_menu(select_menu)
+    select_menu.add.button('Save', main)
+    
+    run = True
+    while run:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+                sys.exit()
+        if select_menu.is_enabled():
+            select_menu.update(events)
+            select_menu.draw(screen)
+        pygame.display.update()
+    
+    
 def play(screen):
+    
     pygame.display.set_caption('Fanorona')
     board = Board()
     run = True
@@ -59,6 +83,7 @@ def play(screen):
                 board.draw_pieces(screen)
                 pygame.display.update()
                 pygame.time.wait(1000)
+                
         # if board.state.player == 1:
         #     board.draw_board(screen)
         #     board.draw_pieces(screen)
@@ -75,24 +100,8 @@ def play(screen):
         #         board.draw_pieces(screen)
         #         pygame.display.update()
         #         pygame.time.wait(1000)
-            
-        # minimax
-        # if board.state.player == 0:
-        #     board.draw_board(screen)
-        #     board.draw_pieces(screen)
-        #     pygame.display.update()
-        #     if(board.state.check_win_condition() != -1):
-        #         break
-        #     print("running minimax")
-        #     moves = board.execute_best_move()
-        #     print("finished running minimax")
-        #     for move in moves:
-        #         board.state = board.state.apply_move(move[0], move[1])
-        #         board.draw_board(screen)
-        #         board.draw_pieces(screen)
-        #         pygame.display.update()
-        #         pygame.time.wait(1000)
-
+                
+        
         home_button.update(pygame.mouse.get_pos())
         retry_button.update(pygame.mouse.get_pos())
         
@@ -115,7 +124,7 @@ def main():
                 if start_button.selected(pygame.mouse.get_pos()):
                     play(screen)
                 if options_button.selected(pygame.mouse.get_pos()):
-                    print('Options button clicked')
+                    options(screen)
                 if quit_button.selected(pygame.mouse.get_pos()):
                     run = False
                 
