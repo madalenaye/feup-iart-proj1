@@ -1,5 +1,4 @@
 from typing import Iterator, List, Tuple
-from typing_extensions import Self
 from gameState import CaptureType, GameState
 from icecream import ic
 
@@ -8,25 +7,20 @@ MoveType = Tuple[Tuple[Tuple[int, int], Tuple[int, int]], CaptureType]
 class TreeNode:
     state: GameState
     moves: List[MoveType]
-    previous: Self = None
-    children: List[Self]
+    previous: 'TreeNode' = None
+    children: List['TreeNode']
 
     def __init__(self, state, moves = []) -> None:
         self.state = state
         self.moves = moves
         self.children = []
 
-    def add_children(self, child: Self):
+    def add_children(self, child: 'TreeNode'):
         self.children.append(child)
         child.previous = self
 
-    def generate_children(self):
-        for new_state, move in get_next_moves(self.state):
-            new_node = TreeNode(new_state, move)
-            self.add_children(new_node)
-
 # This assumes that capture is always obligatory.
-def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, MoveType]]:
+def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, List[MoveType]]]:
     """
         This takes a GameState and returns all sequences of moves lazily. This returns a tuple with
         the new GameState (where it's always the opposite player's turn) and the sequence of moves required
@@ -42,7 +36,7 @@ def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, MoveTyp
             yield (new_state, [(i, None)])
         return
 
-    def helper(state:GameState, list_moves:List[MoveType]) -> Iterator[Tuple[GameState, MoveType]]:
+    def helper(state:GameState, list_moves:List[MoveType]) -> Iterator[Tuple[GameState, List[MoveType]]]:
         new_moves = state.get_valid_moves()
         for capture_move in new_moves:
             types = state.check_if_move_takes(capture_move)
@@ -77,6 +71,28 @@ def greedy(state: GameState) -> List[MoveType]:
     best_child = max(scores, key=lambda x: x[1])
     print(best_child[0].moves)
     return best_child[0].moves
+def minimax(node: GameState, depth: int, ai_player: int) -> int:
+    """
+    Minimax algorithm implementation.
+    """
+
+
+    if depth == 0:
+        return node.evaluate_game_state(ai_player)
+
+    if ai_player == node.player:
+        max_eval = float('-inf')
+        for next_state, _ in get_next_moves(node):
+            eval_child = minimax(next_state, depth - 1, ai_player)
+            max_eval = max(max_eval, eval_child)
+        return max_eval
+    else:
+        min_eval = float('inf')
+        for next_state, _ in get_next_moves(node):
+            eval_child = minimax(next_state, depth - 1, ai_player)
+            min_eval = min(min_eval, eval_child)
+        return min_eval
+
     
     
 

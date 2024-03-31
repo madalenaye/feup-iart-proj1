@@ -1,6 +1,4 @@
 from typing import Tuple, List
-from typing_extensions import Self
-
 from icecream import ic
 from dataclasses import dataclass
 from copy import deepcopy
@@ -178,7 +176,7 @@ class GameState:
 
 
     # tuple has the form: (from_pos, to_pos)
-    def apply_move(self, move: Tuple[Tuple[int,int],Tuple[int,int]], captureType: CaptureType) -> Self:
+    def apply_move(self, move: Tuple[Tuple[int,int],Tuple[int,int]], captureType: CaptureType) -> 'GameState':
         diff = (move[1][0]-move[0][0], move[1][1]-move[0][1])
 
         move_type = self.check_if_move_takes(move)
@@ -247,7 +245,7 @@ class GameState:
             self.player = player
     
     # cloning function in order to avoid python shenanigans with shallow copying
-    def clone_board(self) -> Self:
+    def clone_board(self) -> 'GameState':
         cloned_state = list(map(lambda x: x.copy(), self.state))
         return GameState(
             cloned_state, 
@@ -284,6 +282,14 @@ class GameState:
             return 1
         return -1
     
+    def evaluate_game_state(self, player: int) -> int:
+        white_points = sum(row.count(0) for row in self.state)
+        black_points = sum(row.count(1) for row in self.state)
+        if player == 1:
+            return black_points - white_points
+        if player == 0:
+            return white_points - black_points
+            
     def get_total_number_of_pieces(self) -> int:
         result = 0
         for row in self.state:
