@@ -9,7 +9,7 @@
 ### Instructions for compiling, running and using the project
 
 #### Dependencies
-Before running the program, make sure you have installed the dependencies listed in the `requirements.txt`` file. To install the dependencies, open the terminal, navigate to the project directory, and run the following command:
+Before running the program, make sure you have installed the dependencies listed in the `requirements.txt` file. To install the dependencies, open the terminal, navigate to the project directory, and run the following command:
 ```bash
 pip install -r requirements.txt
 ```
