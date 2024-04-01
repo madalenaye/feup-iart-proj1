@@ -306,6 +306,7 @@ class GameState:
             return 1
         return -1
     
+    # Evaluation function for the game state 
     def evaluate_game_state(self, player: int) -> int:
         white_points = sum(row.count(0) for row in self.state)
         black_points = sum(row.count(1) for row in self.state)
@@ -313,7 +314,8 @@ class GameState:
             return black_points - white_points
         if player == 0:
             return white_points - black_points
-        
+    
+    # Evaluation function for the game state using a heuristic
     def evaluate_game_state_heuristic(self, player: int) -> int:
         white_points = sum(row.count(0) for row in self.state)
         black_points = sum(row.count(1) for row in self.state)

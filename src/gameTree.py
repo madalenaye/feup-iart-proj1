@@ -51,7 +51,7 @@ def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, List[Mo
     
     yield from helper(intial_state, [])
 
-
+# This is a simple greedy search that always chooses the move that maximizes the nº of pieces captured.
 def greedy(state: GameState) -> List[MoveType]:
     
     node = TreeNode(state)

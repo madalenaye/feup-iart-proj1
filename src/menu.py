@@ -12,7 +12,7 @@ player2 = 0
 '''1 - player 1, -1 - player 2'''
 curr_player = 1
 
-
+# Load images
 bg = pygame.image.load('assets/images/background.jpg')
 title = pygame.image.load('assets/images/fanorona.png')
 start_image = pygame.image.load('assets/images/start-btn.png')
@@ -31,7 +31,7 @@ home_image = pygame.image.load('assets/images/home-btn.png')
 home_image = pygame.transform.scale(home_image, (65, 65))
 home_button = Button(WIDTH//2 - 33, HEIGHT - 25, home_image)
 
-
+# Theme for the menus
 theme = pygame_menu.themes.THEME_BLUE.copy()
 theme.widget_font_color = BROWN  
 theme.widget_font_shadow = True  
@@ -50,6 +50,7 @@ theme.background_color = myimage
 theme.widget_font = font
 theme.title = False
 
+# Auxiliar functions to draw the menus
 def draw_main_menu(screen):
     
     pygame.display.set_caption('Main menu')
@@ -60,12 +61,11 @@ def draw_main_menu(screen):
     options_button.draw_button(screen)
     quit_button.draw_button(screen)
 
-    
 
 def font(size):
     return pygame.font.Font('assets/fonts/default.ttf', size)
 
-
+# Auxiliar functions to set the options
 def set_difficulty_player1(value, difficulty):
     global player1
     player1 = difficulty
@@ -89,13 +89,16 @@ def draw_options_menu(options_menu):
 def draw_choose_pieces_menu(choose_pieces_menu):
     choose_pieces_menu.add.image('assets/images/player1-btn.png', angle=0, scale=(0.16, 0.16))
     choose_pieces_menu.add.selector(' ', [('White', 1), ('Black', -1)], onchange=set_pieces_color)
-    
+
+# Auxiliar function to get the current player level
 def players_level(curr_player):
     if curr_player == 1:
         return player1
     else:
         return player2
-    
+
+# Auxiliar function to draw the game over menu
+
 def draw_game_over_menu(game_over, winner):
     if (winner == 1):
         game_over.add.label('Player 1' + ' wins!', font_size=40)
