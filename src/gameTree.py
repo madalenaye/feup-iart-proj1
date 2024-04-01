@@ -63,7 +63,7 @@ def greedy(state: GameState) -> List[MoveType]:
         
     for child in node.children:
         new_state = child.state
-        score = abs(new_state.evaluate_game_state())
+        score = new_state.evaluate_game_state(state.player)
         print(score)
         scores.append((child, score))
         

@@ -68,7 +68,10 @@ class Board:
         for move in valid_moves:
             from_pos, to_pos = move
             if (from_pos[0] == col and from_pos[1] == row):
-                pygame.draw.circle(screen, GRAY, (to_pos[0] * SQUARE_SIZE + SQUARE_SIZE / 2, (4-to_pos[1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 25)
+                if (self.state.player == 0):
+                    pygame.draw.circle(screen, GRAY, (to_pos[0] * SQUARE_SIZE + SQUARE_SIZE / 2, (4-to_pos[1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 25)
+                else:
+                    pygame.draw.circle(screen, BLACK_PIECE, (to_pos[0] * SQUARE_SIZE + SQUARE_SIZE / 2, (4-to_pos[1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 25)
     
     def execute_best_move(self) -> List[MoveType]:
         best_minimax_value = float('-inf')
@@ -95,6 +98,7 @@ class Board:
         self.state = self.state.apply_move((from_pos, to_pos), 
                                            None if valid_move_types == [] else valid_move_types[0])
         ic(self.state.check_win_condition())
+        self.draw_board(screen)
         self.draw_pieces(screen)
 
             

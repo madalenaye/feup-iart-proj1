@@ -29,11 +29,7 @@ quit_button = Button(WIDTH//2 - 125, HEIGHT//2 + 90, quit_image)
 
 home_image = pygame.image.load('assets/images/home-btn.png')
 home_image = pygame.transform.scale(home_image, (65, 65))
-home_button = Button(WIDTH//2 - 70, HEIGHT - 25, home_image)
-
-retry_image = pygame.image.load('assets/images/retry-btn.png')
-retry_image = pygame.transform.scale(retry_image, (65, 65))
-retry_button = Button(WIDTH//2 + 5, HEIGHT - 25, retry_image)
+home_button = Button(WIDTH//2 - 33, HEIGHT - 25, home_image)
 
 
 theme = pygame_menu.themes.THEME_BLUE.copy()
@@ -81,13 +77,14 @@ def set_difficulty_player2(value, difficulty):
 def set_pieces_color(value, color):
     global curr_player 
     curr_player = color
+    print(curr_player)
 
     
 def draw_options_menu(options_menu):
     options_menu.add.image('assets/images/player1-btn.png', angle=0, scale=(0.16, 0.16))
-    options_menu.add.selector(' ', [('Human', 0), ('Level 1 Bot', 1), ('Level 2 Bot', 2), ('Level 3 Bot', 3), ('Level 4 Bot', 4)], onchange=set_difficulty_player1)
+    options_menu.add.selector(' ', [('Human', 0), ('Level 1 Bot', 1), ('Level 2 Bot', 2), ('Level 3 Bot', 3), ('Level 4 Bot', 4), ('Level 5 Bot', 5)], onchange=set_difficulty_player1)
     options_menu.add.image('assets/images/player2-btn.png', angle=0, scale=(0.16, 0.16))
-    options_menu.add.selector(' ', [('Human', 0), ('Level 1 Bot', 1), ('Level 2 Bot', 2), ('Level 3 Bot', 3), ('Level 4 Bot', 4)], onchange=set_difficulty_player2)
+    options_menu.add.selector(' ', [('Human', 0), ('Level 1 Bot', 1), ('Level 2 Bot', 2), ('Level 3 Bot', 3), ('Level 4 Bot', 4), ('Level 5 Bot', 5)], onchange=set_difficulty_player2)
     options_menu.add.label('')
     
 def draw_choose_pieces_menu(choose_pieces_menu):
@@ -99,3 +96,12 @@ def players_level(curr_player):
         return player1
     else:
         return player2
+    
+def draw_game_over_menu(screen, game_over, winner):
+    if (winner == 1):
+        game_over.add.label('Player 1' + ' wins!', font_size=40)
+    else:
+        game_over.add.label('Player 2' + ' wins!', font_size=40)
+        
+def get_curr_player():
+    return curr_player
