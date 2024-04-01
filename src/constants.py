@@ -1,3 +1,4 @@
+''' This file contains all the constants used in the game. '''
 WIDTH = 900
 HEIGHT = 500
 BOARD_COLOR = (196, 157, 123)

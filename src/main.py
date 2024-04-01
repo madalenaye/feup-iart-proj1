@@ -14,6 +14,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT + 2 * PADDING))
 
 current_player = get_curr_player()
 
+# Options menu
 def options(screen):
     
     pygame.display.set_caption('Options')
@@ -35,7 +36,7 @@ def options(screen):
         pygame.display.update()
     
 
-        
+# Menu to select the color of the pieces     
 def choose_pieces(screen):
     pygame.display.set_caption('Choose pieces')
     choose_pieces_menu = pygame_menu.Menu('Which Player Starts First', WIDTH, HEIGHT + 2 * PADDING, theme=theme)
@@ -57,6 +58,7 @@ def choose_pieces(screen):
 
         pygame.display.update()
 
+# Game mode: Huma
 def human_play(board, screen):
     run = True
     while run:
@@ -97,7 +99,8 @@ def human_play(board, screen):
         home_button.update(pygame.mouse.get_pos())
         pygame.display.update()
     pygame.display.update()
-    
+
+# Game mode: Level 1 Bot
 def greedy_play(board, screen):
     pygame.display.update()
     pygame.time.wait(1000)
@@ -111,6 +114,7 @@ def greedy_play(board, screen):
     if(board.state.check_win_condition() != -1):
         return -1
 
+# Game mode: Level 2 Bot
 def monte_carlo_play(board, screen):
     monte_carlo = MonteCarloNode(board.state.clone_board())
     node = monte_carlo.run_simulation(5)
@@ -137,6 +141,7 @@ def custom_monte_carlo_play(board, screen):
     if(board.state.check_win_condition() != -1):
         return -1
     
+# Game mode: Level 4 Bot   
 def minimax_play(board, screen):
     pygame.display.update()
     pygame.time.wait(1000)
@@ -150,6 +155,7 @@ def minimax_play(board, screen):
     if(board.state.check_win_condition() != -1):
         return -1
 
+# Game mode: Level 5 Bot
 def alpha_beta_play(board, screen):
     pygame.display.update()
     pygame.time.wait(1000)
@@ -162,7 +168,7 @@ def alpha_beta_play(board, screen):
         pygame.time.wait(1000)
     if(board.state.check_win_condition() != -1):
         return -1
-
+#Game mode: Level 6 Bot
 def alpha_beta_heuristic_play(board, screen):
     pygame.display.update()
     pygame.time.wait(1000)
@@ -175,7 +181,8 @@ def alpha_beta_heuristic_play(board, screen):
         pygame.time.wait(1000)
     if(board.state.check_win_condition() != -1):
         return -1
-    
+
+# Main game loop
 def play(screen):
     pygame.display.set_caption('Fanorona')
     board = Board()
@@ -230,6 +237,7 @@ def play(screen):
     
         pygame.display.update()
 
+# game over menu
 def game_over(screen, winner):
     game_over = pygame_menu.Menu(height=HEIGHT + 2 * PADDING,theme=theme,title='Game Over', width=WIDTH)
     draw_game_over_menu(game_over, winner)

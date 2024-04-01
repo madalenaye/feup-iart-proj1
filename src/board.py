@@ -14,6 +14,7 @@ class Board:
     def __init__(self) -> None:
         self.state.init_pieces()
     
+    # Draws the board lines
     def draw_board(self,screen):
         
         screen.fill(BOARD_COLOR)
@@ -44,6 +45,7 @@ class Board:
                 final_col=max(0,aux_col-2)
                 pygame.draw.line(screen, BLACK,(SQUARE_SIZE/2 + aux_col * SQUARE_SIZE,5*SQUARE_SIZE/2),(SQUARE_SIZE/2 + final_col * SQUARE_SIZE,5*SQUARE_SIZE/2 + (aux_col-final_col) * SQUARE_SIZE),int(SQUARE_SIZE/18))
     
+    # Draws the pieces on the board
     def draw_pieces(self, screen):
         col = 0
         row = 0
@@ -56,6 +58,7 @@ class Board:
                     pygame.draw.circle(screen, BLACK, (x, HEIGHT-y), 25)
                     pygame.draw.circle(screen,  colors[i], (x, HEIGHT-y), 23)
     
+    # Returns the row and column of the clicked piece
     def get_row_col_from_mouse(self, pos):
         x, y = pos
         row = 4 - (y // SQUARE_SIZE) 
@@ -65,6 +68,7 @@ class Board:
     def get_piece(self, row, col):
         return self.state.state[row][col]
     
+    # Draws the valid moves for the selected piece
     def draw_valid_moves(self, screen, row, col):
         valid_moves = self.state.get_valid_moves()
         for move in valid_moves:
@@ -75,6 +79,7 @@ class Board:
                 else:
                     pygame.draw.circle(screen, GREEN, (to_pos[0] * SQUARE_SIZE + SQUARE_SIZE / 2, (4-to_pos[1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 25)
     
+    # returns the best move for the current player using the minimax algorithm
     def execute_best_move_minimax(self) -> List[MoveType]:
         best_minimax_value = float('-inf')
         best_move = None
@@ -90,6 +95,7 @@ class Board:
         # Execute the best move
         return best_move
     
+
     def execute_best_move_alpha_beta(self) -> List[MoveType]:
         best_minimax_value = float('-inf')
         best_move = None
@@ -120,17 +126,22 @@ class Board:
         # Execute the best move
         return best_move
 
+    # handles the moves where the player has multiple types of captures
     def draw_move_types(self, screen, move, valid_move_types):
         diff = (move[1][0] - move[0][0], move[1][1] - move[0][1])
+        
+        # horizontal moves
         if diff == (1,0) or diff == (-1,0):
             pygame.draw.circle(screen, RED, ((move[0][0] + diff[0]*2) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
             pygame.draw.circle(screen, RED, ((move[0][0] - diff[0]) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
+        # vertical moves
         if diff == (0,-1):
             pygame.draw.circle(screen, RED, ((move[0][0]) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] - 1) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
             pygame.draw.circle(screen, RED, ((move[0][0]) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] + 2) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
         if diff == (0, 1):
             pygame.draw.circle(screen, RED, ((move[0][0]) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] + 1) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
             pygame.draw.circle(screen, RED, ((move[0][0]) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] - 2) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
+        # diagonal moves
         if diff == (1, -1) or diff == (-1, -1): 
             pygame.draw.circle(screen, RED, ((move[0][0] + diff[0]*2) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] + 2) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
             pygame.draw.circle(screen, RED, ((move[0][0] - diff[0]) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] - 1 ) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
