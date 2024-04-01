@@ -4,6 +4,7 @@ from constants import *
 from menu import *
 import sys
 from montecarlo import MonteCarloNode, CustomPolicyMonteCarloNode
+from gameTree import TreeNode
 import time
 
 
@@ -12,7 +13,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT + 2 * PADDING))
 
 def play(screen):
     pygame.display.set_caption('Fanorona')
-    board = Board(screen)
+    board = Board()
     run = True
     while run:
         board.draw_board(screen)
@@ -62,8 +63,31 @@ def play(screen):
         #         board.draw_pieces(screen)
         #         pygame.display.update()
         #         pygame.time.wait(1000)
-                
-        
+            
+        #minimax
+        if board.state.player == 0:
+            board.draw_board(screen)
+            board.draw_pieces(screen)
+            pygame.display.update()
+            if(board.state.check_win_condition() != -1):
+               break
+            print("running minimax")
+            start_time = time.time()
+            
+            moves = board.execute_best_move_alpha_beta_heuristic()
+            
+            end_time = time.time()
+            execution_time = end_time - start_time
+            
+            print("Time taken to execute best move:", execution_time, "seconds")
+            print("finished running minimax")
+            for move in moves:
+                board.state = board.state.apply_move(move[0], move[1])
+                board.draw_board(screen)
+                board.draw_pieces(screen)
+                pygame.display.update()
+                pygame.time.wait(1000)
+
         home_button.update(pygame.mouse.get_pos())
         retry_button.update(pygame.mouse.get_pos())
         

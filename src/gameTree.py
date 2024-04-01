@@ -1,5 +1,4 @@
 from typing import Iterator, List, Tuple
-from typing_extensions import Self
 from gameState import CaptureType, GameState
 from icecream import ic
 
@@ -8,21 +7,20 @@ MoveType = Tuple[Tuple[Tuple[int, int], Tuple[int, int]], CaptureType]
 class TreeNode:
     state: GameState
     moves: List[MoveType]
-    previous: Self = None
-    children: List[Self]
+    previous: 'TreeNode' = None
+    children: List['TreeNode']
 
     def __init__(self, state, moves = []) -> None:
         self.state = state
         self.moves = moves
         self.children = []
 
-    def add_children(self, child: Self):
+    def add_children(self, child: 'TreeNode'):
         self.children.append(child)
         child.previous = self
 
-
 # This assumes that capture is always obligatory.
-def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, MoveType]]:
+def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, List[MoveType]]]:
     """
         This takes a GameState and returns all sequences of moves lazily. This returns a tuple with
         the new GameState (where it's always the opposite player's turn) and the sequence of moves required
@@ -38,7 +36,7 @@ def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, MoveTyp
             yield (new_state, [(i, None)])
         return
 
-    def helper(state:GameState, list_moves:List[MoveType]) -> Iterator[Tuple[GameState, MoveType]]:
+    def helper(state:GameState, list_moves:List[MoveType]) -> Iterator[Tuple[GameState, List[MoveType]]]:
         new_moves = state.get_valid_moves()
         for capture_move in new_moves:
             types = state.check_if_move_takes(capture_move)
@@ -52,7 +50,6 @@ def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, MoveTyp
                 
     
     yield from helper(intial_state, [])
-
     
     
 
