@@ -30,7 +30,7 @@ def play(screen):
                 if home_button.selected(pygame.mouse.get_pos()):
                     main()
                 if retry_button.selected(pygame.mouse.get_pos()):
-                    board = Board(screen)
+                    board = Board()
                     continue
             if event.type == pygame.MOUSEBUTTONDOWN and not board.selected_piece:
                 pos = pygame.mouse.get_pos()
@@ -65,7 +65,7 @@ def play(screen):
         #         pygame.time.wait(1000)
             
         # minimax
-        # if board.state.player == 0:
+        # if board.state.player == 1:
         #     board.draw_board(screen)
         #     board.draw_pieces(screen)
         #     pygame.display.update()
@@ -79,7 +79,7 @@ def play(screen):
         #         board.draw_board(screen)
         #         board.draw_pieces(screen)
         #         pygame.display.update()
-        #         pygame.time.wait(1000)
+        #         pygame.time.wait(2000)
 
         home_button.update(pygame.mouse.get_pos())
         retry_button.update(pygame.mouse.get_pos())

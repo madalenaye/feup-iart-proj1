@@ -105,7 +105,7 @@ class MonteCarloNode(TreeNode):
             selected_node.backpropagate(result)
             simulations_ran += 1
 
-        print(f"Simulations ran: {simulations_ran}")
+        # print(f"Simulations ran: {simulations_ran}")
 
         return self.best_child()
     

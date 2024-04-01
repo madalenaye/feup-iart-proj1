@@ -273,7 +273,7 @@ class GameState:
 
     def check_win_condition(self) -> int:
         """
-            Returns 0 if black won, 1 if white won or -1 if the game continues
+            Returns 0 if white won, 1 if black won or -1 if the game continues
         """
         flattened_state = [item for row in self.state for item in row]
         if(not any(map(lambda x: x == 1, flattened_state))):
