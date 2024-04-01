@@ -6,8 +6,8 @@ from icecream import ic
 from menu import *
 import sys
 from montecarlo import MonteCarloNode, CustomPolicyMonteCarloNode
-from gameTree import greedy, TreeNode
-import time
+from gameTree import greedy
+from minimax import minimax
 
 
 pygame.init()
@@ -113,6 +113,7 @@ def greedy_play(board, screen):
 def monte_carlo_play(board, screen):
     monte_carlo = MonteCarloNode(board.state.clone_board())
     node = monte_carlo.run_simulation(5)
+    pygame.display.update()
     for move in node.moves:
         board.state = board.state.apply_move(move[0], move[1])
         board.draw_board(screen)
@@ -121,8 +122,46 @@ def monte_carlo_play(board, screen):
         pygame.time.wait(1000)
     if(board.state.check_win_condition() != -1):
         return -1
+    
+def minimax_play(board, screen):
+    pygame.display.update()
+    pygame.time.wait(1000)
+    moves = board.execute_best_move_minimax()
+    for move in moves:
+        board.state = board.state.apply_move(move[0], move[1])
+        board.draw_board(screen)
+        board.draw_pieces(screen)
+        pygame.display.update()
+        pygame.time.wait(1000)
+    if(board.state.check_win_condition() != -1):
+        return -1
 
+def alpha_beta_play(board, screen):
+    pygame.display.update()
+    pygame.time.wait(1000)
+    moves = board.execute_best_move_alpha_beta()
+    for move in moves:
+        board.state = board.state.apply_move(move[0], move[1])
+        board.draw_board(screen)
+        board.draw_pieces(screen)
+        pygame.display.update()
+        pygame.time.wait(1000)
+    if(board.state.check_win_condition() != -1):
+        return -1
 
+def alpha_beta_heuristic_play(board, screen):
+    pygame.display.update()
+    pygame.time.wait(1000)
+    moves = board.execute_best_move_alpha_beta_heuristic()
+    for move in moves:
+        board.state = board.state.apply_move(move[0], move[1])
+        board.draw_board(screen)
+        board.draw_pieces(screen)
+        pygame.display.update()
+        pygame.time.wait(1000)
+    if(board.state.check_win_condition() != -1):
+        return -1
+    
 def play(screen):
     pygame.display.set_caption('Fanorona')
     board = Board()
@@ -150,17 +189,26 @@ def play(screen):
             if (monte_carlo_play(board, screen) == -1):
                 game_over(screen, current_player)
                 break           
+        
         elif (players_level(current_player) == 3):
             pass
-            #minimax_play(board, screen)
-
+            #custom_mont_carlo(board, screen)
+            
         elif (players_level(current_player) == 4):
-            pass
-            #alpha_beta_play(board, screen)_A
-        
+            if (minimax_play(board, screen) == -1):
+                game_over(screen, current_player)
+                break
+            
         elif (players_level(current_player) == 5):
-            pass
-            #alpha_beta_play(board, screen)_B
+            
+            if (alpha_beta_play(board, screen) == -1):
+                game_over(screen, current_player)
+                break
+        
+        elif (players_level(current_player) == 6):
+            if (alpha_beta_heuristic_play(board, screen) == -1):
+                game_over(screen, current_player)
+                break
         
         current_player = -current_player
         
@@ -169,8 +217,8 @@ def play(screen):
 
 def game_over(screen, winner):
     game_over = pygame_menu.Menu(height=HEIGHT + 2 * PADDING,theme=theme,title='Game Over', width=WIDTH)
-    draw_game_over_menu(screen, game_over, winner)
-    game_over.add.button('Return to main menu', main)
+    draw_game_over_menu(game_over, winner)
+    game_over.add.button('Exit', pygame_menu.events.EXIT)
     game_over.mainloop(screen)      
         
 def main():
