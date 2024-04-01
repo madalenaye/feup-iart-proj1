@@ -50,6 +50,28 @@ def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, List[Mo
                 
     
     yield from helper(intial_state, [])
+
+
+def greedy(state: GameState) -> List[MoveType]:
+    
+    node = TreeNode(state)
+    scores = []
+    
+    for i in get_next_moves(node.state):
+        child_node = TreeNode(i[0], i[1])
+        node.add_children(child_node)
+        
+    for child in node.children:
+        new_state = child.state
+        score = new_state.evaluate_game_state(state.player)
+        print(score)
+        scores.append((child, score))
+        
+
+    best_child = max(scores, key=lambda x: x[1])
+    print(best_child[0].moves)
+    return best_child[0].moves
+
     
     
 
@@ -62,3 +84,9 @@ if __name__ == '__main__':
     for i in get_next_moves(node.state):
         child_node = TreeNode(i[0], i[1])
         node.add_children(child_node)
+    
+    state = GameState()
+    mov = greedy(state, 1)
+    for (i, j) in mov:
+        new_state = state.apply_move(i, j)
+    ic(greedy(new_state, 0))
