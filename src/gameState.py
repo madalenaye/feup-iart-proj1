@@ -3,6 +3,7 @@ from icecream import ic
 from dataclasses import dataclass
 from copy import deepcopy
 from enum import Enum
+import math
 
 CaptureType = Enum('CaptureType', ['APPROACH', 'WITHDRAWAL'])
 
@@ -84,6 +85,30 @@ class GameState:
                 (pos[0]-1, pos[1]+1),
                 (pos[0]-1, pos[1]-1),
                 (pos[0]+1, pos[1]-1)
+            ])
+
+        return filter(lambda x: x[1] >= 0 and x[1] < 5, 
+                filter(lambda x: x[0] >= 0 and x[0] < 9, all_squares))
+    
+    def get_adjacent_squares2(self, pos: Tuple[int, int]) -> List[Tuple[int, int]]:
+        all_squares=[
+            (pos[0]+2, pos[1]),
+            (pos[0]-2, pos[1]),
+            (pos[0], pos[1]+2),
+            (pos[0], pos[1]-2)
+        ]
+
+        has_diagonal = pos[0] % 2 == 0
+
+        if pos[1] % 2 == 1:
+            has_diagonal = not has_diagonal
+        
+        if has_diagonal:
+            all_squares.extend([
+                (pos[0]+2, pos[1]+2),
+                (pos[0]-2, pos[1]+2),
+                (pos[0]-2, pos[1]-2),
+                (pos[0]+2, pos[1]-2)
             ])
 
         return filter(lambda x: x[1] >= 0 and x[1] < 5, 
@@ -178,7 +203,6 @@ class GameState:
     # tuple has the form: (from_pos, to_pos)
     def apply_move(self, move: Tuple[Tuple[int,int],Tuple[int,int]], captureType: CaptureType) -> 'GameState':
         diff = (move[1][0]-move[0][0], move[1][1]-move[0][1])
-
         move_type = self.check_if_move_takes(move)
         new_board = self.clone_board()
         if move_type == [] and captureType is None:
@@ -289,6 +313,32 @@ class GameState:
             return black_points - white_points
         if player == 0:
             return white_points - black_points
+        
+    def evaluate_game_state_heuristic(self, player: int) -> int:
+        white_points = sum(row.count(0) for row in self.state)
+        black_points = sum(row.count(1) for row in self.state)
+
+        for i in range(9):
+            for j in range(5):
+                if self.state[i][j] == 0:  # White piece
+                    adjacent_squares = list(self.get_adjacent_squares((i, j)))
+                    adjacent_squares2 = list(self.get_adjacent_squares2((i, j)))
+                    white_points += len(adjacent_squares) + len(adjacent_squares2)
+                    white_points -= math.ceil(math.log(len(adjacent_squares) + 1))
+                    white_points -= math.ceil(math.log(len(adjacent_squares2) + 1))
+                elif self.state[i][j] == 1:  # Black piece
+                    adjacent_squares = list(self.get_adjacent_squares((i, j)))
+                    adjacent_squares2 = list(self.get_adjacent_squares2((i, j)))
+                    black_points += len(adjacent_squares) + len(adjacent_squares2)
+                    black_points -= math.ceil(math.log(len(adjacent_squares) + 1))
+                    black_points -= math.ceil(math.log(len(adjacent_squares2) + 1)) 
+
+        if player == 1:
+            return black_points - white_points
+        if player == 0:
+            return white_points - black_points
+        
+
             
     def get_total_number_of_pieces(self) -> int:
         result = 0

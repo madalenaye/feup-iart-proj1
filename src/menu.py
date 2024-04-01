@@ -13,21 +13,21 @@ player2 = 0
 curr_player = 1
 
 
-bg = pygame.image.load('assets/images/background.jpg')
-title = pygame.image.load('assets/images/fanorona.png')
-start_image = pygame.image.load('assets/images/start-btn.png')
+bg = pygame.image.load('../assets/images/background.jpg')
+title = pygame.image.load('../assets/images/fanorona.png')
+start_image = pygame.image.load('../assets/images/start-btn.png')
 start_image = pygame.transform.scale(start_image, (250, 100))
 start_button = Button(WIDTH//2 - 125, HEIGHT//2 - 90, start_image)
 
-options_image = pygame.image.load('assets/images/options-btn.png')
+options_image = pygame.image.load('../assets/images/options-btn.png')
 options_image = pygame.transform.scale(options_image, (250, 100))
 options_button = Button(WIDTH//2 - 125, HEIGHT//2, options_image)
 
-quit_image = pygame.image.load('assets/images/quit-btn.png')
+quit_image = pygame.image.load('../assets/images/quit-btn.png')
 quit_image = pygame.transform.scale(quit_image, (250, 100))
 quit_button = Button(WIDTH//2 - 125, HEIGHT//2 + 90, quit_image)
 
-home_image = pygame.image.load('assets/images/home-btn.png')
+home_image = pygame.image.load('../assets/images/home-btn.png')
 home_image = pygame.transform.scale(home_image, (65, 65))
 home_button = Button(WIDTH//2 - 33, HEIGHT - 25, home_image)
 

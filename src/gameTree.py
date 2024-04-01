@@ -71,27 +71,6 @@ def greedy(state: GameState) -> List[MoveType]:
     best_child = max(scores, key=lambda x: x[1])
     print(best_child[0].moves)
     return best_child[0].moves
-def minimax(node: GameState, depth: int, ai_player: int) -> int:
-    """
-    Minimax algorithm implementation.
-    """
-
-
-    if depth == 0:
-        return node.evaluate_game_state(ai_player)
-
-    if ai_player == node.player:
-        max_eval = float('-inf')
-        for next_state, _ in get_next_moves(node):
-            eval_child = minimax(next_state, depth - 1, ai_player)
-            max_eval = max(max_eval, eval_child)
-        return max_eval
-    else:
-        min_eval = float('inf')
-        for next_state, _ in get_next_moves(node):
-            eval_child = minimax(next_state, depth - 1, ai_player)
-            min_eval = min(min_eval, eval_child)
-        return min_eval
 
     
     
