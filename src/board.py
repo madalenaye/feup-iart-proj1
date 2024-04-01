@@ -77,7 +77,7 @@ class Board:
 
         for next_state, moves in get_next_moves(self.state):
             # Call minimax function to get the value
-            minimax_value = minimax(next_state, depth=5, ai_player=self.state.player)  # Adjust depth as needed
+            minimax_value = minimax(next_state, depth=3, ai_player=self.state.player)  # Adjust depth as needed
 
             # Update best move if necessary
             if minimax_value > best_minimax_value:

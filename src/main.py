@@ -64,7 +64,6 @@ def play(screen):
         #         pygame.display.update()
         #         pygame.time.wait(1000)
             
-        # minimax
         # if board.state.player == 1:
         #     board.draw_board(screen)
         #     board.draw_pieces(screen)
@@ -72,7 +71,7 @@ def play(screen):
         #     if(board.state.check_win_condition() != -1):
         #         break
         #     print("running minimax")
-        #     moves = board.execute_best_move()
+        #     moves = board.execute_best_move_alpha_beta()
         #     print("finished running minimax")
         #     for move in moves:
         #         board.state = board.state.apply_move(move[0], move[1])

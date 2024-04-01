@@ -5,11 +5,12 @@ from typing import List, Tuple
 from board import Board
 from gameState import GameState
 from gameTree import MoveType
+from icecream import ic
 from montecarlo import MonteCarloNode, CustomPolicyMonteCarloNode
 
 NUM_OF_TURNS = 100
 NUM_OF_GAMES = 15
-AI_LIST = ["minimax", "montecarlo", "custom_montecarlo"]
+AI_LIST = ["minimax", "montecarlo", "custom_montecarlo", "alpha-beta"]
 
 
 def step_game(ai_type: str, state: GameState) -> GameState:
@@ -17,7 +18,7 @@ def step_game(ai_type: str, state: GameState) -> GameState:
     if ai_type == "minimax":
         board = Board()
         board.state = state
-        move = board.execute_best_move()
+        move = board.execute_best_move_minimax()
     if ai_type == "montecarlo":
         node = MonteCarloNode(state)
         new_node = node.run_simulation(max_computation_time=5)
@@ -26,7 +27,14 @@ def step_game(ai_type: str, state: GameState) -> GameState:
         node = CustomPolicyMonteCarloNode(state)
         new_node = node.run_simulation(max_computation_time=5)
         move = new_node.moves
+    if ai_type == "alpha-beta":
+        board = Board()
+        board.state = state
+        move = board.execute_best_move_alpha_beta()
 
+    if move == None:
+        print(f"Didn't found moves in {ai_type}, win condition: {state.check_win_condition()}")
+        ic(state.state, state.player)
     new_state = state
     for step in move:
         new_state = new_state.apply_move(step[0], step[1])
