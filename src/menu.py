@@ -77,7 +77,6 @@ def set_difficulty_player2(value, difficulty):
 def set_pieces_color(value, color):
     global curr_player 
     curr_player = color
-    print(curr_player)
 
     
 def draw_options_menu(options_menu):

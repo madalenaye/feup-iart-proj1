@@ -4,6 +4,7 @@ from gameTree import *
 from minimax import *
 from constants import *
 from icecream import ic
+import sys
 import pygame
 
 class Board:
@@ -70,9 +71,9 @@ class Board:
             from_pos, to_pos = move
             if (from_pos[0] == col and from_pos[1] == row):
                 if (self.state.player == 0):
-                    pygame.draw.circle(screen, GRAY, (to_pos[0] * SQUARE_SIZE + SQUARE_SIZE / 2, (4-to_pos[1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 25)
+                    pygame.draw.circle(screen, GREEN, (to_pos[0] * SQUARE_SIZE + SQUARE_SIZE / 2, (4-to_pos[1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 25)
                 else:
-                    pygame.draw.circle(screen, BLACK_PIECE, (to_pos[0] * SQUARE_SIZE + SQUARE_SIZE / 2, (4-to_pos[1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 25)
+                    pygame.draw.circle(screen, GREEN, (to_pos[0] * SQUARE_SIZE + SQUARE_SIZE / 2, (4-to_pos[1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 25)
     
     def execute_best_move_minimax(self) -> List[MoveType]:
         best_minimax_value = float('-inf')
@@ -119,16 +120,55 @@ class Board:
         # Execute the best move
         return best_move
 
+    def draw_move_types(self, screen, move, valid_move_types):
+        diff = (move[1][0] - move[0][0], move[1][1] - move[0][1])
+        if diff == (1,0) or diff == (-1,0):
+            pygame.draw.circle(screen, RED, ((move[0][0] + diff[0]*2) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
+            pygame.draw.circle(screen, RED, ((move[0][0] - diff[0]) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
+        if diff == (0,-1):
+            pygame.draw.circle(screen, RED, ((move[0][0]) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] - 1) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
+            pygame.draw.circle(screen, RED, ((move[0][0]) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] + 2) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
+        if diff == (0, 1):
+            pygame.draw.circle(screen, RED, ((move[0][0]) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] + 1) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
+            pygame.draw.circle(screen, RED, ((move[0][0]) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] - 2) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
+        if diff == (1, -1) or diff == (-1, -1): 
+            pygame.draw.circle(screen, RED, ((move[0][0] + diff[0]*2) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] + 2) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
+            pygame.draw.circle(screen, RED, ((move[0][0] - diff[0]) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] - 1 ) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
+        if diff == (-1, 1) or diff == (1,1):
+            pygame.draw.circle(screen, RED, ((move[0][0] + diff[0]*2) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] - 2) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
+            pygame.draw.circle(screen, RED, ((move[0][0] - diff[0]) * SQUARE_SIZE + SQUARE_SIZE / 2, (4-move[0][1] + 1 ) * SQUARE_SIZE + SQUARE_SIZE / 2), 10)
 
     def draw_move(self, screen, from_pos, to_pos):
         valid_moves = self.state.get_valid_moves()
         if (from_pos, to_pos) not in valid_moves:
             return
-        valid_move_types = self.state.check_if_move_takes((from_pos, to_pos)) 
-        # FIXME(luisd): Refactor this in order to make user choose the capture type if there's multiple capture types
-        self.state = self.state.apply_move((from_pos, to_pos), 
-                                           None if valid_move_types == [] else valid_move_types[0])
-        ic(self.state.check_win_condition())
+        valid_move_types = self.state.check_if_move_takes((from_pos, to_pos))
+        ic(valid_move_types)
+        if len(valid_move_types) < 2:
+            self.state = self.state.apply_move((from_pos, to_pos), 
+                                            None if valid_move_types == [] else valid_move_types[0])
+        else:
+            # move type selection
+            run = True
+            while run:
+                self.draw_move_types(screen, (from_pos, to_pos), valid_move_types)
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        run = False
+                        pygame.quit()
+                        sys.exit()
+                    
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        click = self.get_row_col_from_mouse(pygame.mouse.get_pos())
+                        diff = (to_pos[0] - from_pos[0], to_pos[1] - from_pos[1])
+                        if (to_pos[1]+diff[1], to_pos[0]+diff[0]) == click:
+                            self.state = self.state.apply_move((from_pos, to_pos), CaptureType.APPROACH)
+                        elif (from_pos[1]-diff[1], from_pos[0]-diff[0]) == click:
+                            self.state = self.state.apply_move((from_pos, to_pos), CaptureType.WITHDRAWAL)
+                        run = False
+                pygame.display.update()
+            
+        self.state.check_win_condition()
         self.draw_board(screen)
         self.draw_pieces(screen)
 

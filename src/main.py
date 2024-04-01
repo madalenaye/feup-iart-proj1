@@ -7,7 +7,6 @@ from menu import *
 import sys
 from montecarlo import MonteCarloNode, CustomPolicyMonteCarloNode
 from gameTree import greedy
-from minimax import minimax
 
 
 pygame.init()
@@ -61,7 +60,10 @@ def choose_pieces(screen):
 def human_play(board, screen):
     run = True
     while run:
+        board.draw_board(screen)
+        board.draw_pieces(screen)
         home_button.draw_button(screen)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -82,7 +84,6 @@ def human_play(board, screen):
                 player = board.state.player
                 board.draw_move(screen, board.selected_piece, (col,row))
                 board.selected_piece = None
-                print(player, board.state.player)
                 if board.state.player != player:
                     run = False
                     break
