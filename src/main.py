@@ -4,7 +4,7 @@ from constants import *
 from menu import *
 import sys
 from montecarlo import MonteCarloNode, CustomPolicyMonteCarloNode
-from gameTree import minimax,TreeNode
+from gameTree import TreeNode
 import time
 
 
