@@ -323,15 +323,11 @@ class GameState:
                 if self.state[i][j] == 0:  # White piece
                     adjacent_squares = list(self.get_adjacent_squares((i, j)))
                     adjacent_squares2 = list(self.get_adjacent_squares2((i, j)))
-                    white_points += len(adjacent_squares) + len(adjacent_squares2)
-                    white_points -= math.ceil(math.log(len(adjacent_squares) + 1))
-                    white_points -= math.ceil(math.log(len(adjacent_squares2) + 1))
+                    white_points += math.ceil(math.log(len(adjacent_squares) + 1 + len(adjacent_squares2)))
                 elif self.state[i][j] == 1:  # Black piece
                     adjacent_squares = list(self.get_adjacent_squares((i, j)))
                     adjacent_squares2 = list(self.get_adjacent_squares2((i, j)))
-                    black_points += len(adjacent_squares) + len(adjacent_squares2)
-                    black_points -= math.ceil(math.log(len(adjacent_squares) + 1))
-                    black_points -= math.ceil(math.log(len(adjacent_squares2) + 1)) 
+                    black_points += math.ceil(math.log(len(adjacent_squares) + 1 + len(adjacent_squares2)))
 
         if player == 1:
             return black_points - white_points

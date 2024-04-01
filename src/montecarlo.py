@@ -4,7 +4,7 @@ from typing import Any, List, Tuple
 from gameState import GameState
 from gameTree import MoveType, TreeNode, get_next_moves
 import random
-from math import sqrt,log
+from math import sqrt,log,ceil
 import time
 CONST_UCB = 1.4
 
@@ -113,9 +113,22 @@ class CustomPolicyMonteCarloNode(MonteCarloNode):
     def __init__(self, state, moves = [], intended_player = -1) -> None:
         super().__init__(state, moves, intended_player)
 
+    def evaluate_no_takes_board(self, args:Tuple[GameState, List[MoveType]]) -> int:
+        result = 0
+        state = args[0]
+        adjacent_set = set()
+        for i in range(9):
+            for j in range(5):
+                if state.state[j][i] == state.player:
+                    adjacent_set.update(state.get_adjacent_squares((i, j)))
+                    adjacent_set.update(state.get_adjacent_squares2((i, j)))
+        return len(adjacent_set)
+
     def _simulation_policy(self, parent, next_moves) -> Any:
         if next_moves[0][1][0][1] == None:
-            return random.choice(next_moves)[0]
+            evaluations = list(zip(next_moves, map(self.evaluate_no_takes_board, next_moves)))
+            max_diff = min(evaluations, key=lambda x: x[1])[1]
+            return random.choice(list([move for move in evaluations if move[1] == max_diff]))[0][0]
         max_diff = max(map(lambda x: len(x[1]), next_moves))
         return random.choice(list([move for move in next_moves if len(move[1]) == max_diff]))[0]
 
@@ -127,6 +140,6 @@ if __name__ == '__main__':
     state = state.apply_move(move, state.check_if_move_takes(move)[0])
 
     # we start monte carlo on the first move of the black pieces
-    monte_carlo = MonteCarloNode(state)
+    monte_carlo = CustomPolicyMonteCarloNode(state)
     best_move = monte_carlo.run_simulation(5)
     print(best_move)
