@@ -64,12 +64,10 @@ def greedy(state: GameState) -> List[MoveType]:
     for child in node.children:
         new_state = child.state
         score = new_state.evaluate_game_state(state.player)
-        print(score)
         scores.append((child, score))
         
 
     best_child = max(scores, key=lambda x: x[1])
-    print(best_child[0].moves)
     return best_child[0].moves
 
     

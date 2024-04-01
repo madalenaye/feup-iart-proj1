@@ -4,13 +4,13 @@ from typing import List, Tuple
 
 from board import Board
 from gameState import GameState
-from gameTree import MoveType
+from gameTree import MoveType, greedy
 from icecream import ic
 from montecarlo import MonteCarloNode, CustomPolicyMonteCarloNode
 
 NUM_OF_TURNS = 100
 NUM_OF_GAMES = 15
-AI_LIST = ["minimax", "montecarlo", "custom_montecarlo", "alpha-beta", "alpha-beta_custom"]
+AI_LIST = ["minimax", "montecarlo", "custom_montecarlo", "alpha-beta", "alpha-beta_custom", "greedy"]
 
 
 def step_game(ai_type: str, state: GameState) -> GameState:
@@ -36,6 +36,9 @@ def step_game(ai_type: str, state: GameState) -> GameState:
         board = Board()
         board.state = state
         move = board.execute_best_move_alpha_beta_heuristic()
+
+    if ai_type == "greedy":
+        move = greedy(state)
 
     if move == None:
         print(f"Didn't found moves in {ai_type}, win condition: {state.check_win_condition()}")
