@@ -128,6 +128,19 @@ def monte_carlo_play(board, screen):
     if(board.state.check_win_condition() != -1):
         return -1
 
+def custom_monte_carlo_play(board, screen):
+    monte_carlo = CustomPolicyMonteCarloNode(board.state.clone_board())
+    node = monte_carlo.run_simulation(5)
+    pygame.display.update()
+    for move in node.moves:
+        board.state = board.state.apply_move(move[0], move[1])
+        board.draw_board(screen)
+        board.draw_pieces(screen)
+        pygame.display.update()
+        pygame.time.wait(1000)
+    if(board.state.check_win_condition() != -1):
+        return -1
+    
 # Game mode: Level 4 Bot   
 def minimax_play(board, screen):
     pygame.display.update()
@@ -199,8 +212,9 @@ def play(screen):
                 break           
         
         elif (players_level(current_player) == 3):
-            pass
-            #custom_mont_carlo(board, screen)
+            if (custom_monte_carlo_play(board, screen) == -1):
+                game_over(screen, current_player)
+                break       
             
         elif (players_level(current_player) == 4):
             if (minimax_play(board, screen) == -1):

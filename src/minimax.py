@@ -9,7 +9,7 @@ def minimax(node: GameState, depth: int, ai_player: int) -> int:
     """
 
 
-    if depth == 0:
+    if depth == 0 or node.check_win_condition() != -1:
         return node.evaluate_game_state(ai_player)
 
     if ai_player == node.player:
@@ -31,7 +31,7 @@ def alpha_beta(node: GameState, depth: int, ai_player: int, alpha: int, beta: in
     Minimax algorithm implementation with alpha-beta pruning.
     """
 
-    if depth == 0:
+    if depth == 0 or node.check_win_condition() != -1:
         return node.evaluate_game_state(ai_player)
 
     if ai_player == node.player:

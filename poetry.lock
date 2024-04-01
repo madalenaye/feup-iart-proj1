@@ -127,6 +127,26 @@ files = [
 ]
 
 [[package]]
+name = "pygame-menu"
+version = "4.4.3"
+description = "A menu for pygame. Simple, and easy to use"
+optional = false
+python-versions = ">=3.6, <4"
+files = [
+    {file = "pygame-menu-4.4.3.tar.gz", hash = "sha256:02a99e557601f356ce2cc82a10e98bcb581d539a41c666c4ee614fae366c3647"},
+    {file = "pygame_menu-4.4.3-py3-none-any.whl", hash = "sha256:d81f50acc854701c6b8d08b36a0b4f3a69f9ee63d3ae7591d063239812e75a0e"},
+]
+
+[package.dependencies]
+pygame = ">=1.9.3"
+pyperclip = "*"
+typing-extensions = "*"
+
+[package.extras]
+docs = ["sphinx", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
+test = ["nose2[coverage-plugin]"]
+
+[[package]]
 name = "pygments"
 version = "2.17.2"
 description = "Pygments is a syntax highlighting package written in Python."
@@ -218,6 +238,16 @@ test = ["flaky", "greenlet (>=3.0.0a1)", "ipython", "pytest", "pytest-asyncio (=
 types = ["typing-extensions"]
 
 [[package]]
+name = "pyperclip"
+version = "1.8.2"
+description = "A cross-platform clipboard module for Python. (Only handles plain text for now.)"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pyperclip-1.8.2.tar.gz", hash = "sha256:105254a8b04934f0bc84e9c24eb360a591aaf6535c9def5f29d92af107a9bf57"},
+]
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -242,4 +272,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "c8dcbd2ce5cb8d265f9030daee5eadec3c486ae32c868c03e9e6433b3d1429cb"
+content-hash = "07d0a959688b8491240690d3ed6781f20e4b3be5d3d59f6ee02e987f86d8e414"
