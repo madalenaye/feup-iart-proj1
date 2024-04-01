@@ -50,30 +50,6 @@ def get_next_moves(intial_state: GameState) -> Iterator[Tuple[GameState, List[Mo
                 
     
     yield from helper(intial_state, [])
-
-
-def minimax(node: GameState, depth: int, ai_player: int) -> int:
-    """
-    Minimax algorithm implementation.
-    """
-
-
-    if depth == 0:
-        return node.evaluate_game_state(ai_player)
-
-    if ai_player == node.player:
-        max_eval = float('-inf')
-        for next_state, _ in get_next_moves(node):
-            eval_child = minimax(next_state, depth - 1, ai_player)
-            max_eval = max(max_eval, eval_child)
-        return max_eval
-    else:
-        min_eval = float('inf')
-        for next_state, _ in get_next_moves(node):
-            eval_child = minimax(next_state, depth - 1, ai_player)
-            min_eval = min(min_eval, eval_child)
-        return min_eval
-
     
     
 

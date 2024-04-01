@@ -4,7 +4,7 @@ from constants import *
 from menu import *
 import sys
 from montecarlo import MonteCarloNode, CustomPolicyMonteCarloNode
-from gameTree import minimax,TreeNode
+from gameTree import TreeNode
 import time
 
 
@@ -64,22 +64,29 @@ def play(screen):
         #         pygame.display.update()
         #         pygame.time.wait(1000)
             
-        # minimax
-        # if board.state.player == 0:
-        #     board.draw_board(screen)
-        #     board.draw_pieces(screen)
-        #     pygame.display.update()
-        #     if(board.state.check_win_condition() != -1):
-        #         break
-        #     print("running minimax")
-        #     moves = board.execute_best_move()
-        #     print("finished running minimax")
-        #     for move in moves:
-        #         board.state = board.state.apply_move(move[0], move[1])
-        #         board.draw_board(screen)
-        #         board.draw_pieces(screen)
-        #         pygame.display.update()
-        #         pygame.time.wait(1000)
+        #minimax
+        if board.state.player == 0:
+            board.draw_board(screen)
+            board.draw_pieces(screen)
+            pygame.display.update()
+            if(board.state.check_win_condition() != -1):
+               break
+            print("running minimax")
+            start_time = time.time()
+            
+            moves = board.execute_best_move_minimax()
+            
+            end_time = time.time()
+            execution_time = end_time - start_time
+            
+            print("Time taken to execute best move:", execution_time, "seconds")
+            print("finished running minimax")
+            for move in moves:
+                board.state = board.state.apply_move(move[0], move[1])
+                board.draw_board(screen)
+                board.draw_pieces(screen)
+                pygame.display.update()
+                pygame.time.wait(1000)
 
         home_button.update(pygame.mouse.get_pos())
         retry_button.update(pygame.mouse.get_pos())

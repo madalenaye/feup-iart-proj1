@@ -1,6 +1,7 @@
 import time
 from gameState import GameState
 from gameTree import *
+from minimax import *
 from constants import *
 from icecream import ic
 import pygame
@@ -70,13 +71,28 @@ class Board:
             if (from_pos[0] == col and from_pos[1] == row):
                 pygame.draw.circle(screen, GRAY, (to_pos[0] * SQUARE_SIZE + SQUARE_SIZE / 2, (4-to_pos[1]) * SQUARE_SIZE + SQUARE_SIZE / 2), 25)
     
-    def execute_best_move(self) -> List[MoveType]:
+    def execute_best_move_minimax(self) -> List[MoveType]:
         best_minimax_value = float('-inf')
         best_move = None
 
         for next_state, moves in get_next_moves(self.state):
             # Call minimax function to get the value
-            minimax_value = minimax(next_state, depth=3, ai_player=self.state.player)  # Adjust depth as needed
+            minimax_value = minimax(next_state, depth=5, ai_player=self.state.player)  # Adjust depth as needed
+
+            # Update best move if necessary
+            if minimax_value > best_minimax_value:
+                best_minimax_value = minimax_value
+                best_move = moves
+        # Execute the best move
+        return best_move
+    
+    def execute_best_move_alpha_beta(self) -> List[MoveType]:
+        best_minimax_value = float('-inf')
+        best_move = None
+
+        for next_state, moves in get_next_moves(self.state):
+            # Call minimax function to get the value
+            minimax_value = alpha_beta(next_state, depth=5, ai_player=self.state.player,alpha=float('-inf'),beta=float('inf'))  # Adjust depth as needed
 
             # Update best move if necessary
             if minimax_value > best_minimax_value:
