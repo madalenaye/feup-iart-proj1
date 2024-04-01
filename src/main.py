@@ -74,7 +74,7 @@ def play(screen):
             print("running minimax")
             start_time = time.time()
             
-            moves = board.execute_best_move_minimax()
+            moves = board.execute_best_move_alpha_beta_heuristic()
             
             end_time = time.time()
             execution_time = end_time - start_time

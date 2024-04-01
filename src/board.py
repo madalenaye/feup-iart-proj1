@@ -77,7 +77,7 @@ class Board:
 
         for next_state, moves in get_next_moves(self.state):
             # Call minimax function to get the value
-            minimax_value = minimax(next_state, depth=5, ai_player=self.state.player)  # Adjust depth as needed
+            minimax_value = minimax(next_state, depth=2, ai_player=self.state.player)  # Adjust depth as needed
 
             # Update best move if necessary
             if minimax_value > best_minimax_value:
@@ -93,6 +93,21 @@ class Board:
         for next_state, moves in get_next_moves(self.state):
             # Call minimax function to get the value
             minimax_value = alpha_beta(next_state, depth=5, ai_player=self.state.player,alpha=float('-inf'),beta=float('inf'))  # Adjust depth as needed
+
+            # Update best move if necessary
+            if minimax_value > best_minimax_value:
+                best_minimax_value = minimax_value
+                best_move = moves
+        # Execute the best move
+        return best_move
+
+    def execute_best_move_alpha_beta_heuristic(self) -> List[MoveType]:
+        best_minimax_value = float('-inf')
+        best_move = None
+
+        for next_state, moves in get_next_moves(self.state):
+            # Call minimax function to get the value
+            minimax_value = alpha_beta_heuristic(next_state, depth=5, ai_player=self.state.player,alpha=float('-inf'),beta=float('inf'))  # Adjust depth as needed
 
             # Update best move if necessary
             if minimax_value > best_minimax_value:
