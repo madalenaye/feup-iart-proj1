@@ -302,6 +302,7 @@ class GameState:
         white_points = sum(row.count(0) for row in self.state)
         black_points = sum(row.count(1) for row in self.state)
         return white_points - black_points
+    
 
         
 

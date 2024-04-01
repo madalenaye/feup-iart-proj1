@@ -16,9 +16,9 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT + 2 * PADDING))
 def options(screen):
     
     pygame.display.set_caption('Options')
-    select_menu = pygame_menu.Menu('Select mode',WIDTH, HEIGHT + 2 * PADDING, theme=theme)
-    draw_select_menu(select_menu)
-    select_menu.add.button('Save', main)
+    options_menu = pygame_menu.Menu('Select mode',WIDTH, HEIGHT + 2 * PADDING, theme=theme)
+    draw_options_menu(options_menu)
+    options_menu.add.button('Save', main)
     
     run = True
     while run:
@@ -28,12 +28,66 @@ def options(screen):
                 run = False
                 pygame.quit()
                 sys.exit()
-        if select_menu.is_enabled():
-            select_menu.update(events)
-            select_menu.draw(screen)
+        if options_menu.is_enabled():
+            options_menu.update(events)
+            options_menu.draw(screen)
         pygame.display.update()
     
+
+def choose_pieces(screen):
+    pygame.display.set_caption('Choose pieces')
+    choose_pieces_menu = pygame_menu.Menu('Which Player Starts First', WIDTH, HEIGHT + 2 * PADDING, theme=theme)
+    draw_choose_pieces_menu(choose_pieces_menu)
+    choose_pieces_menu.add.button('Play', play, screen)
+    choose_pieces_menu.add.button('Back', main)
     
+    run = True
+    while run:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+                sys.exit()
+        if choose_pieces_menu.is_enabled():
+            choose_pieces_menu.update(events)
+            choose_pieces_menu.draw(screen)
+
+        pygame.display.update()
+
+
+def play(screen):
+    pygame.display.set_caption('Fanorona')
+    board = Board()
+    run = True
+    while run:
+        board.draw_board(screen)
+        board.draw_pieces(screen)
+        home_button.draw_button(screen)
+        retry_button.draw_button(screen)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+                sys.exit()
+            
+            if event.type == pygame.MOUSEBUTTONDOWN and (home_button.selected(pygame.mouse.get_pos()) or retry_button.selected(pygame.mouse.get_pos())):
+                if home_button.selected(pygame.mouse.get_pos()):
+                    main()
+                if retry_button.selected(pygame.mouse.get_pos()):
+                    board = Board()
+                    continue
+            if (players_level(curr_player) == 0):
+                human_play(board, screen)
+            elif (players_level(curr_player) == 1):
+                greedy_play(board, screen)
+            elif (players_level(curr_player) == 2):
+                minimax_play(board, screen)
+            elif (players_level(curr_player) == 3):
+                monte_carlo_play(board, screen)
+            elif (players_level(curr_player) == 4):
+                alpha_beta_play(board, screen)
+'''
 def play(screen):
     
     pygame.display.set_caption('Fanorona')
@@ -54,7 +108,7 @@ def play(screen):
                 if home_button.selected(pygame.mouse.get_pos()):
                     main()
                 if retry_button.selected(pygame.mouse.get_pos()):
-                    board = Board(screen)
+                    board = Board()
                     continue
             if event.type == pygame.MOUSEBUTTONDOWN and not board.selected_piece:
                 pos = pygame.mouse.get_pos()
@@ -106,7 +160,7 @@ def play(screen):
         retry_button.update(pygame.mouse.get_pos())
         
         pygame.display.update()
-        
+'''       
         
         
 def main():
@@ -122,7 +176,7 @@ def main():
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if start_button.selected(pygame.mouse.get_pos()):
-                    play(screen)
+                    choose_pieces(screen)
                 if options_button.selected(pygame.mouse.get_pos()):
                     options(screen)
                 if quit_button.selected(pygame.mouse.get_pos()):

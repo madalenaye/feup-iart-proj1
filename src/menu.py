@@ -5,6 +5,13 @@ import pygame_menu
 
 pygame.font.init()
 
+'''0 - Human, 1 - Level 1 Bot, 2 - Level 2 Bot, 3 - Level 3 Bot, 4 - Level 4 Bot'''
+player1 = 0
+player2 = 0
+
+'''1 - player 1, -1 - player 2'''
+curr_player = 1
+
 
 bg = pygame.image.load('assets/images/background.jpg')
 title = pygame.image.load('assets/images/fanorona.png')
@@ -28,13 +35,6 @@ retry_image = pygame.image.load('assets/images/retry-btn.png')
 retry_image = pygame.transform.scale(retry_image, (65, 65))
 retry_button = Button(WIDTH//2 + 5, HEIGHT - 25, retry_image)
 
-player1_image = pygame.image.load('assets/images/player1-btn.png')
-player1_image = pygame.transform.scale(player1_image, (250, 100))
-player1_button = Button(WIDTH//2 - 125, 30, player1_image)
-
-player2_image = pygame.image.load('assets/images/player2-btn.png')
-player2_image = pygame.transform.scale(player2_image, (250, 100))
-player2_button = Button(WIDTH//2 - 125, 200, player2_image)
 
 theme = pygame_menu.themes.THEME_BLUE.copy()
 theme.widget_font_color = BROWN  
@@ -71,16 +71,31 @@ def font(size):
 
 
 def set_difficulty_player1(value, difficulty):
-    print(value)
-    print(difficulty)
+    global player1
+    player1 = difficulty
 
 def set_difficulty_player2(value, difficulty):
-    print(value)
-    print(difficulty)
+    global player2
+    player2 = difficulty
+
+def set_pieces_color(value, color):
+    global curr_player 
+    curr_player = color
+
     
-def draw_select_menu(select_menu):
-    select_menu.add.image('assets/images/player1-btn.png', angle=0, scale=(0.16, 0.16))
-    select_menu.add.selector(' ', [('Human', 0), ('Level 1 Bot', 1), ('Level 2 Bot', 2), ('Level 3 Bot', 3), ('Level 4 Bot', 4)], onchange=set_difficulty_player1)
-    select_menu.add.image('assets/images/player2-btn.png', angle=0, scale=(0.16, 0.16))
-    select_menu.add.selector(' ', [('Human', 0), ('Level 1 Bot', 1), ('Level 2 Bot', 2), ('Level 3 Bot', 3), ('Level 4 Bot', 4)], onchange=set_difficulty_player2)
-    select_menu.add.label('')
+def draw_options_menu(options_menu):
+    options_menu.add.image('assets/images/player1-btn.png', angle=0, scale=(0.16, 0.16))
+    options_menu.add.selector(' ', [('Human', 0), ('Level 1 Bot', 1), ('Level 2 Bot', 2), ('Level 3 Bot', 3), ('Level 4 Bot', 4)], onchange=set_difficulty_player1)
+    options_menu.add.image('assets/images/player2-btn.png', angle=0, scale=(0.16, 0.16))
+    options_menu.add.selector(' ', [('Human', 0), ('Level 1 Bot', 1), ('Level 2 Bot', 2), ('Level 3 Bot', 3), ('Level 4 Bot', 4)], onchange=set_difficulty_player2)
+    options_menu.add.label('')
+    
+def draw_choose_pieces_menu(choose_pieces_menu):
+    choose_pieces_menu.add.image('assets/images/player1-btn.png', angle=0, scale=(0.16, 0.16))
+    choose_pieces_menu.add.selector(' ', [('White', 1), ('Black', -1)], onchange=set_pieces_color)
+    
+def players_level(curr_player):
+    if curr_player == 1:
+        return player1
+    else:
+        return player2
